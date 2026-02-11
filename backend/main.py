@@ -72,7 +72,7 @@ def home():
 async def health_check():
     """Ultra-resilient health check to ensure deployment stability."""
     return {
-        "status": "active",
+        "status": "healthy",
         "database": "connected" if (db_client.db is not None) else "warming_up",
         "engine": "live"
     }
