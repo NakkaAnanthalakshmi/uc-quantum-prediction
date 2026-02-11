@@ -11,5 +11,9 @@ services:
         value: 10000
       - key: MONGO_URL
         sync: false
+      - key: MALLOC_ARENA_MAX
+        value: 2
+      - key: PYTHONUNBUFFERED
+        value: 1
     healthCheckPath: /health
     autoDeploy: true
