@@ -7,13 +7,20 @@ def get_mongo_uris():
     """Returns a list of potential URIs to try, ordered by reliability."""
     uris = []
     
-    # Tier 1: User-defined or Railway-linked URIs
-    keys = ["MONGO_URL", "MONGODB_URL", "MONGO_URI", "MONGODB_URI", "MONGO_PUBLIC_URL"]
+    # 1. DIAGNOSTIC: Audit environment for any Mongo-related keys
+    print("--- Clinical Environment Audit ---")
+    for k, v in os.environ.items():
+        if "MONGO" in k or "DB" in k:
+            masked = v[:15] + "..." if len(v) > 15 else v
+            print(f"AUDIT found: {k} = {masked}")
+
+    # Tier 1: User-defined or Railway-linked URIs (Prioritize Public URLs for reliability)
+    keys = ["MONGO_PUBLIC_URL", "MONGO_URL", "MONGODB_URL", "MONGO_URI", "MONGODB_URI"]
     for k in keys:
         val = os.environ.get(k)
         if val and val not in uris:
             uris.append(val)
-            print(f"DIAGNOSTIC: Identified {k} as potential connection path.")
+            print(f"PATH IDENTIFIED: {k}")
 
     # Tier 2: Individual Parameter construction
     host = os.environ.get("MONGOHOST")
