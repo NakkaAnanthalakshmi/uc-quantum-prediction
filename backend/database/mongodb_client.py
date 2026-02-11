@@ -5,9 +5,15 @@ import os
 
 # Production Hardware Configuration
 def get_mongo_uri():
-    # 1. Primary: Explicit URI
-    uri = os.environ.get("MONGO_URI") or os.environ.get("MONGODB_URL") or os.environ.get("MONGODB_URI")
-    if uri: return uri
+    # 1. Primary: Explicit URI (Railway standard when linked is MONGO_URL or MONGODB_URL)
+    # Note: MONGO_URL is the most common Railway default
+    uri = os.environ.get("MONGO_URL") or \
+          os.environ.get("MONGODB_URL") or \
+          os.environ.get("MONGO_URI") or \
+          os.environ.get("MONGODB_URI")
+    if uri: 
+        print(f"DATABASE: Found valid connection variable.")
+        return uri
 
     # 2. Secondary: Construct from individual Railway params
     host = os.environ.get("MONGOHOST")
