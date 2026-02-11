@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: uc-quantum-prediction
+    env: docker
+    plan: free
+    region: oregon
+    buildCommand: docker build -t uc-quantum-prediction .
+    startCommand: ./start.sh
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGO_URL
+        sync: false
+    healthCheckPath: /health
+    autoDeploy: true
