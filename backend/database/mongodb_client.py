@@ -3,19 +3,25 @@ from bson.binary import Binary
 from datetime import datetime
 import os
 
-# Production Hardware Configuration
 def get_mongo_uri():
-    # 1. Primary: Explicit URI (Railway standard when linked is MONGO_URL or MONGODB_URL)
-    # Note: MONGO_URL is the most common Railway default
+    # 1. DIAGNOSTIC: Audit environment for any Mongo-related keys
+    print("--- Clinical Environment Audit ---")
+    mongo_keys = [k for k in os.environ.keys() if "MONGO" in k or "DB" in k]
+    for k in mongo_keys:
+        val = os.environ.get(k, "")
+        masked = val[:15] + "..." if len(val) > 15 else val
+        print(f"AUDIT found: {k} = {masked}")
+    
+    # 2. Primary: Explicit URI
     uri = os.environ.get("MONGO_URL") or \
           os.environ.get("MONGODB_URL") or \
           os.environ.get("MONGO_URI") or \
           os.environ.get("MONGODB_URI")
     if uri: 
-        print(f"DATABASE: Found valid connection variable.")
+        print(f"DATABASE: Valid URI identified in environment.")
         return uri
 
-    # 2. Secondary: Construct from individual Railway params
+    # 3. Secondary: Construct from individual Railway params
     host = os.environ.get("MONGOHOST")
     port = os.environ.get("MONGOPORT")
     user = os.environ.get("MONGOUSER")
@@ -23,19 +29,19 @@ def get_mongo_uri():
     
     if host and port:
         auth = f"{user}:{pwd}@" if user and pwd else ""
+        print("DATABASE: Constructing from shared parameters.")
         return f"mongodb://{auth}{host}:{port}/"
     
-    # 3. Tertiary: Smart Fallback (Railway Internal Pattern)
-    # Most Railway MongoDB services default to these
-    print("DATABASE: Individual variables missing. Trying Smart Fallback (Internal Network)...")
-    return "mongodb://mongo:27017/" # Common Railway default internal service name
+    # 4. Tertiary: Smart Fallback (Try common Railway internal DNS names)
+    print("DATABASE: Standard variables missing. Probing Internal Network...")
+    return "mongodb://mongo:27017/"
 
 MONGO_URI = get_mongo_uri()
 # Mask password for logs
 log_uri = MONGO_URI.split("@")[-1] if "@" in MONGO_URI else MONGO_URI
-print(f"DATABASE CONFIG: Using URI targeting {log_uri}")
+print(f"DATABASE CONFIG: Final target -> {log_uri}")
 
-DB_NAME = "quantum_clinical_db"
+DB_NAME = os.environ.get("MONGODATABASE") or "quantum_clinical_db"
 
 class MongoClient:
     def __init__(self):
