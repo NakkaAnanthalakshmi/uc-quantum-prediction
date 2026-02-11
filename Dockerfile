@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # 1. Prepare Backend
+ENV TORCH_HOME=/app/cache
 COPY backend/requirements.txt /app/backend/
 RUN pip install --no-cache-dir -r /app/backend/requirements.txt
 COPY backend /app/backend/
