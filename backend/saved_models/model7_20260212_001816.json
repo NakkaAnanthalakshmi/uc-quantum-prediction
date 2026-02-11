@@ -1,0 +1,10 @@
+{
+    "id": "model7_20260212_001816.json",
+    "name": "model7",
+    "date": "2026-02-12 00:18",
+    "params": {
+        "reps": 2,
+        "entanglement": "linear"
+    },
+    "accuracy": "92.8%"
+}

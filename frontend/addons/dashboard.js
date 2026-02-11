@@ -134,6 +134,7 @@ async function loadInventory() {
     try {
         const res = await fetch(`${API_URL}/models`);
         const data = await res.json();
+        console.log("Inventory Data:", data);
 
         if (!data.saved || data.saved.length === 0) {
             container.innerHTML = '<p style="color: var(--text-dim); font-size: 0.85rem;">No saved models found in backend/saved_models/</p>';
