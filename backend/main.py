@@ -430,13 +430,18 @@ async def predict_batch(files: list[UploadFile] = File(...)):
 async def list_dataset_files():
     """List all available training files in the datasets folder."""
     import os
-    dataset_dir = "datasets"
+    # Robust path resolution
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dataset_dir = os.path.join(base_dir, "datasets")
+    
     if not os.path.exists(dataset_dir):
-        return {"files": []}
+        return {"files": [], "debug_path": dataset_dir, "status": "not_found"}
     files = []
     for f in os.listdir(dataset_dir):
         if f.lower().endswith(('.png', '.jpg', '.jpeg', '.csv')):
             files.append(f)
+            
+    print(f"DEBUG: Found {len(files)} dataset files in {dataset_dir}")
     return {"files": files}
 
 class TrainRequest(BaseModel):
@@ -467,7 +472,10 @@ async def train_model(req: TrainRequest):
     qml.pipeline = None
     qml.init_model()
     
-    dataset_dir = "datasets"
+    # Robust path resolution for datasets
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    dataset_dir = os.path.join(base_dir, "datasets")
+    
     if not selected_files:
         return {"status": "Error", "message": "No files selected for training."}
 

@@ -28,6 +28,9 @@ COPY backend /app/backend/
 # OPTIMIZATION: Pre-download heavy models during build to prevent OOM
 RUN python /app/backend/preload_models.py
 
+# 1.5. Prepare Datasets
+COPY datasets /app/datasets/
+
 # 2. Prepare Frontend
 COPY frontend /usr/share/nginx/html/
 
