@@ -32,8 +32,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf.template
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-# Expose the Railway port
-EXPOSE ${PORT}
+# Expose the Railway port (dynamically set by Railway)
+EXPOSE 80
 
 # Run the unified rest-stop
 CMD ["/app/start.sh"]
