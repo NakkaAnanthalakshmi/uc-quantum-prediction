@@ -1,12 +1,11 @@
 // Centralized Clinical API Configuration
 const CONFIG = {
-    // Check for a specifically defined global backend URL, else fallback to hostname-based detection
-    API_URL: window.CLINICAL_BACKEND_URL ||
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:8001'
-            : `https://${window.location.hostname.replace('frontend', 'backend')}`), // Heuristic for Railway/Render
+    // ONE-LINK ARCHITECTURE: Use relative /api path in cloud, fallback to localhost:8001 for local dev
+    API_URL: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:8001'
+        : '/api', // This routes through the Nginx reverse proxy
     HEALTH_CHECK_INTERVAL: 5000,
-    VERSION: '1.3.0-CloudReady'
+    VERSION: '1.4.0-Enterprise-Proxy'
 };
 
 // Make it available globally

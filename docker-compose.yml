@@ -8,10 +8,8 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - MONGO_URI=mongodb://host.docker.internal:27017/
-    # Note: host.docker.internal allows the container to talk to your local MongoDB Compass
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - MONGO_URI=${MONGO_URI:-mongodb://mongodb:27017/uc_database}
+    restart: always
 
   frontend:
     build: ./frontend
@@ -20,3 +18,16 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    restart: always
+
+  # MongoDB Service (Optional: Railway provides its own, but this is good for local/VPS)
+  mongodb:
+    image: mongo:latest
+    container_name: qml-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
