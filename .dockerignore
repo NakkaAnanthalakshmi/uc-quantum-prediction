@@ -1,0 +1,35 @@
+# Exclude large local data
+datasets/
+backend/datasets/
+saved_models/
+backend/saved_models/
+*.png
+*.jpg
+*.svg
+!medical_ultimate_live.svg
+!medical_ultra_live_bg.svg
+!favicon.png
+
+# Exclude logs and traces
+backend_out.log
+backend_err.log
+diagnostic_trace.txt
+temp.txt
+
+# Exclude environments and dependencies
+node_modules/
+.venv/
+env/
+venv/
+__pycache__/
+
+# Exclude Git
+.git/
+.gitignore
+
+# Exclude local Docker files
+Dockerfile
+docker-compose.yml
+railway.json
+nginx.conf
+start.sh
