@@ -23,18 +23,23 @@ def get_mongo_uri():
     return "mongodb://localhost:27017/"
 
 MONGO_URI = get_mongo_uri()
+# Mask password for logs
+log_uri = MONGO_URI.split("@")[-1] if "@" in MONGO_URI else MONGO_URI
+print(f"DATABASE CONFIG: Using URI targeting {log_uri}")
+
 DB_NAME = "quantum_clinical_db"
 
 class MongoClient:
     def __init__(self):
         try:
-            self.client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
+            print(f"Connecting to MongoDB at {log_uri}...")
+            self.client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
             self.db = self.client[DB_NAME]
             # Verify connection
             self.client.server_info()
-            print(f"Connected to MongoDB at {MONGO_URI}")
+            print("DATABASE: SUCCESSful connection established.")
         except Exception as e:
-            print(f"MongoDB Connection Failed: {e}")
+            print(f"DATABASE: Connection FAILED. Reason: {e}")
             self.db = None
 
     def save_prediction(self, patient_id, prediction, confidence, metrics, image_bytes=None, metadata=None):
