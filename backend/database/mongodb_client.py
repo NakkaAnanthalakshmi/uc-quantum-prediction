@@ -19,8 +19,10 @@ def get_mongo_uri():
         auth = f"{user}:{pwd}@" if user and pwd else ""
         return f"mongodb://{auth}{host}:{port}/"
     
-    # 3. Fallback: Localhost
-    return "mongodb://localhost:27017/"
+    # 3. Tertiary: Smart Fallback (Railway Internal Pattern)
+    # Most Railway MongoDB services default to these
+    print("DATABASE: Individual variables missing. Trying Smart Fallback (Internal Network)...")
+    return "mongodb://mongo:27017/" # Common Railway default internal service name
 
 MONGO_URI = get_mongo_uri()
 # Mask password for logs

@@ -32,6 +32,14 @@ def init_model():
     if os.path.exists(model_path) and config.get("is_fitted", False):
         try:
             print("Loading persisted Quantum Model from disk...")
+            
+            # Module Aliasing for Qiskit 1.x compatibility (Fixes unpickling errors)
+            import sys
+            import qiskit.circuit
+            import qiskit.circuit.library
+            sys.modules['qiskit.circuit.quantumregister'] = qiskit.circuit
+            sys.modules['qiskit.circuit.library.data_preparation.zz_feature_map'] = qiskit.circuit.library
+            
             pipeline = joblib.load(model_path)
             print("QSVC Model Loaded Successfully.")
             return
