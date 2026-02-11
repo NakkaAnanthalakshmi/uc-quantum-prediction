@@ -1,10 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
 pymongo
 fastapi
 uvicorn
 python-multipart
 qiskit
 qiskit-machine-learning
---index-url https://download.pytorch.org/whl/cpu
 torch
 torchvision
 scikit-learn
