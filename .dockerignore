@@ -1,6 +1,6 @@
 # Exclude large local data
-datasets/
-backend/datasets/
+!datasets/
+!backend/datasets/
 saved_models/
 backend/saved_models/
 *.png

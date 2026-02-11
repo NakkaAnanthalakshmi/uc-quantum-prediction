@@ -30,6 +30,8 @@ temp.txt
 !medical_ultimate_live.svg
 !medical_ultra_live_bg.svg
 !favicon.png
+!datasets/
+!datasets/*.png
 
 # Environment
 .env
