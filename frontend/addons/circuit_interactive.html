@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Circuit | Quantum Analytics</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="circuit_interactive.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+    class="bg-gray-900 text-gray-100 font-sans antialiased selection:bg-cyan-500 selection:text-white overflow-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-900/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex h-screen flex-col">
+
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-purple-400 to-cyan-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">
+                        QUANTUM <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-500">INSIGHT</span>
+                    </h1>
+                </div>
+
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="dashboard.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Advanced Lab</a>
+                    <a href="analytics.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Analytics</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-hidden flex flex-col p-6">
+            <div class="max-w-7xl mx-auto w-full h-full flex flex-col gap-6">
+
+                <!-- Controls -->
+                <div
+                    class="flex items-center justify-between p-4 rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                    <div class="flex items-center gap-4">
+                        <label class="text-sm text-gray-400 font-medium">Structure:</label>
+                        <select id="reps-select" onchange="updateCircuit()"
+                            class="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block p-2.5">
+                            <option value="1">Depth: 1 Repetition</option>
+                            <option value="2" selected>Depth: 2 Repetitions (Default)</option>
+                            <option value="3">Depth: 3 Repetitions</option>
+                        </select>
+
+                        <select id="ent-select" onchange="updateCircuit()"
+                            class="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block p-2.5">
+                            <option value="linear" selected>Entanglement: Linear</option>
+                            <option value="circular">Entanglement: Circular</option>
+                            <option value="full">Entanglement: Full</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 px-3 py-1 rounded bg-cyan-900/20 border border-cyan-800/50">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                            <span class="text-xs text-cyan-300 font-mono">Hadamard</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-2 px-3 py-1 rounded bg-purple-900/20 border border-purple-800/50">
+                            <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                            <span class="text-xs text-purple-300 font-mono">Phase/Z</span>
+                        </div>
+                        <div
+                            class="flex items-center gap-2 px-3 py-1 rounded bg-indigo-900/20 border border-indigo-800/50">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                            <span class="text-xs text-indigo-300 font-mono">Entangle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas Container -->
+                <div
+                    class="relative flex-1 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md overflow-hidden shadow-2xl group">
+                    <div
+                        class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoNTUsIDY1LCA4MSwgMC4yKSIvPjwvc3ZnPg==')] opacity-20">
+                    </div>
+
+                    <canvas id="circuitCanvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+
+                    <!-- Tooltip -->
+                    <div id="gate-tooltip"
+                        class="absolute hidden pointer-events-none p-5 bg-gray-900/95 backdrop-blur border border-cyan-500/30 rounded-lg shadow-2xl z-50 w-80 transform transition-all duration-200">
+                        <div class="flex justify-between items-start mb-2 border-b border-gray-700 pb-2">
+                            <h3 id="tooltip-title" class="text-cyan-400 font-bold text-lg font-mono">RZ Gate</h3>
+                            <span id="tooltip-qubit"
+                                class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-400 border border-gray-700">Q0</span>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Parameter:</span>
+                                <span id="tooltip-param" class="text-white font-mono">θ = 1.57</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Operation:</span>
+                                <span id="tooltip-op" class="text-gray-300">Z-Rotation</span>
+                            </div>
+                            <p id="tooltip-desc" class="text-xs text-gray-500 mt-2 italic leading-relaxed">
+                                Rotates the qubit state around the Z-axis of the Bloch sphere by the specified angle,
+                                encoding the feature data.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loading-overlay"
+                        class="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-40 transition-opacity duration-300">
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="relative w-16 h-16">
+                                <div class="absolute inset-0 border-4 border-gray-700 rounded-full"></div>
+                                <div
+                                    class="absolute inset-0 border-4 border-t-cyan-500 border-r-purple-500 border-b-transparent border-l-transparent rounded-full animate-spin">
+                                </div>
+                            </div>
+                            <p class="text-cyan-400 font-mono text-sm tracking-widest animate-pulse">GENERATING QUANTUM
+                                STRUCTURE...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-xs text-gray-500 font-mono">
+                    <span>Qubits: 4 (Fixed)</span>
+                    <span id="circuit-depth">Total Depth: --</span>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="circuit_interactive.js"></script>
+</body>
+
+</html>

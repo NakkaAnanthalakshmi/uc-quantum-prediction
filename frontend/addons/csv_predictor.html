@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Predictor | Quantum Clinical Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="csv_predictor.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-gray-100 font-sans antialiased">
+    <!-- Background -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 flex min-h-screen flex-col">
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-emerald-400 to-blue-500 rounded-full shadow-[0_0_15px_rgba(52,211,153,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold text-white">
+                        CSV <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">PREDICTOR</span>
+                    </h1>
+                </div>
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html"
+                        class="text-sm text-gray-400 hover:text-emerald-400 transition-colors">Home</a>
+                    <a href="analytics.html"
+                        class="text-sm text-gray-400 hover:text-emerald-400 transition-colors">Analytics</a>
+                    <a href="multi_compare.html"
+                        class="text-sm text-gray-400 hover:text-emerald-400 transition-colors">Grid View</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-7xl mx-auto space-y-6">
+                <!-- Title -->
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-white mb-2">📊 Batch CSV Clinical Inference</h2>
+                    <p class="text-gray-400">Analyze entire patient datasets and predict labels using the Quantum engine
+                    </p>
+                </div>
+
+                <!-- Input Selection -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Upload & Select -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <span
+                                    class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"></span>
+                                Upload New CSV
+                            </h3>
+                            <div id="drop-zone"
+                                class="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-500/50 transition-colors"
+                                onclick="document.getElementById('csvFileInput').click()">
+                                <div class="text-3xl mb-2">📄</div>
+                                <p class="text-sm text-gray-300">Click or drop CSV file</p>
+                                <input type="file" id="csvFileInput" accept=".csv" hidden
+                                    onchange="handleFileUpload(event)">
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"></span>
+                                Sample Datasets
+                            </h3>
+                            <div class="space-y-3">
+                                <button onclick="loadSample('unlabeled_batch_1.csv')"
+                                    class="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-700 text-left hover:bg-gray-800 transition-colors text-sm">
+                                    📁 Unlabeled Batch #1
+                                </button>
+                                <button onclick="loadSample('unlabeled_batch_2.csv')"
+                                    class="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-700 text-left hover:bg-gray-800 transition-colors text-sm">
+                                    📁 Unlabeled Batch #2
+                                </button>
+                                <button onclick="loadSample('unlabeled_batch_3.csv')"
+                                    class="w-full p-3 rounded-xl bg-gray-800/50 border border-gray-700 text-left hover:bg-gray-800 transition-colors text-sm">
+                                    📁 Unlabeled Batch #3
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div
+                        class="lg:col-span-2 p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md min-h-[500px] flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-pink-500"></span>
+                                Prediction Results
+                                <span id="batch-stats" class="text-xs font-normal text-gray-500 ml-2"></span>
+                            </h3>
+                            <button id="export-btn"
+                                class="hidden px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded-lg transition-colors font-medium">
+                                📥 Export Annotated CSV
+                            </button>
+                        </div>
+
+                        <div id="results-loader"
+                            class="hidden flex-1 flex flex-col items-center justify-center space-y-4">
+                            <div
+                                class="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin">
+                            </div>
+                            <p class="text-gray-400 text-sm">Quantum engine processing batch...</p>
+                        </div>
+
+                        <div id="results-placeholder"
+                            class="flex-1 flex flex-col items-center justify-center opacity-40">
+                            <div class="text-6xl mb-4">📈</div>
+                            <p class="text-gray-400">Select or upload a dataset to begin inference</p>
+                        </div>
+
+                        <div id="table-container" class="hidden flex-1 overflow-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead
+                                    class="sticky top-0 bg-gray-900/90 backdrop-blur border-b border-gray-700 text-gray-400 font-medium tracking-wider uppercase">
+                                    <tr>
+                                        <th class="p-3">ID</th>
+                                        <th class="p-3">CRP/ESR</th>
+                                        <th class="p-3">Quantum Decision</th>
+                                        <th class="p-3 text-right">Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-body">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-orange-400 to-red-500"></span>
+                        Unlabeled Inference Logic
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="prose prose-invert prose-sm">
+                            <p class="text-gray-400">
+                                This module allows you to feed raw clinical blood results into the trained QSVC model.
+                                The system extracts 26 parameters (RBC, WBC, CRP, etc.) and uses the PCA-enabled
+                                quantum feature mapping to determine statistical similarity to diseased or healthy
+                                clusters.
+                            </p>
+                        </div>
+                        <ul class="text-sm text-gray-500 space-y-2">
+                            <li class="flex gap-3">
+                                <span class="text-emerald-400">✔</span>
+                                <div><strong class="text-gray-300">Feature Alignment:</strong> Columns must match the
+                                    clinical template.</div>
+                            </li>
+                            <li class="flex gap-3">
+                                <span class="text-emerald-400">✔</span>
+                                <div><strong class="text-gray-300">Quantum Verification:</strong> Predictions are
+                                    cross-checked by the clinical heuristic.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500">
+            Ulcerative Colitis Prediction QML | Unlabeled CSV Inference Module
+        </footer>
+    </div>
+
+    <script src="csv_predictor.js"></script>
+</body>
+
+</html>

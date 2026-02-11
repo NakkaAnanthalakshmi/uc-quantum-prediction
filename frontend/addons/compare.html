@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Comparison - UC Prediction QML</title>
+    <link rel="stylesheet" href="compare.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <h1>📈 Model Comparison</h1>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">Side-by-side Quantum Circuit Evaluation</p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="dashboard.html" class="back-btn">← Back to Lab</a>
+                <a href="../index.html" class="back-btn">Home</a>
+            </div>
+        </header>
+
+        <div id="loading-state" class="loading-overlay">
+            <div class="loader"></div>
+            <p>Syncing Quantum Configurations...</p>
+        </div>
+
+        <div class="comparison-grid" id="comparison-grid">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <script src="compare.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+/* Multi-Compare Page Styles */
+body {
+    background-color: #05080f;
+    background-image: url('../medical_ultimate_live.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+#upload-zone.dragover {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.image-slot {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-slot.filled {
+    border-style: solid;
+    border-color: #4f46e5;
+}
+
+.image-slot.worst {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-slot .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+.severity-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.severity-high {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+}
+
+.severity-low {
+    background: rgba(34, 197, 94, 0.9);
+    color: white;
+}
+
+@keyframes pulse-border {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+}
+
+.image-slot.worst {
+    animation: pulse-border 2s infinite;
+}

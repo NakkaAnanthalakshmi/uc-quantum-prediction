@@ -1,0 +1,10 @@
+{
+    "id": "model3_20251226_002908.json",
+    "name": "model3",
+    "date": "2025-12-26 00:29",
+    "params": {
+        "reps": 2,
+        "entanglement": "linear"
+    },
+    "accuracy": "96.3%"
+}

@@ -1,0 +1,52 @@
+/* Glass Panel */
+.glass-panel {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: rgba(17, 24, 39, 0.5);
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Confusion Matrix Grid */
+.cm-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.cm-cell:hover {
+    transform: scale(1.02);
+}
+
+.cm-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cm-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}

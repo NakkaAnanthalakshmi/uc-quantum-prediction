@@ -1,0 +1,115 @@
+<svg width="100%" height="100%" viewBox="0 0 2000 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <style>
+    @keyframes heartbeat {
+      0% { stroke-dashoffset: 2000; opacity: 0.1; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { stroke-dashoffset: 0; opacity: 0.1; }
+    }
+    @keyframes rotate3d {
+      0% { transform: rotateY(0deg) rotateX(0deg); }
+      50% { transform: rotateY(180deg) rotateX(10deg); }
+      100% { transform: rotateY(360deg) rotateX(0deg); }
+    }
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -20px); }
+      100% { transform: translate(0, 0); }
+    }
+    @keyframes scanner {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    @keyframes nodePulse {
+      0%, 100% { r: 4; opacity: 0.3; }
+      50% { r: 6; opacity: 0.7; }
+    }
+
+    .heartbeat-line {
+      stroke-dasharray: 2000;
+      animation: heartbeat 8s linear infinite;
+    }
+    .medical-icon {
+      transform-origin: center;
+      animation: rotate3d 20s linear infinite;
+    }
+    .floating-layer {
+      animation: drift 25s ease-in-out infinite;
+    }
+    .scan-beam {
+      animation: scanner 12s linear infinite;
+    }
+    .node {
+      animation: nodePulse 4s ease-in-out infinite;
+    }
+  </style>
+
+  <defs>
+    <radialGradient id="bgDepth" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#161b3d" />
+      <stop offset="100%" stop-color="#05070a" />
+    </radialGradient>
+    
+    <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="transparent" />
+      <stop offset="50%" stop-color="rgba(59, 130, 246, 0.15)" />
+      <stop offset="100%" stop-color="transparent" />
+    </linearGradient>
+
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Depth Layer -->
+  <rect width="2000" height="1000" fill="url(#bgDepth)" />
+
+  <!-- Scanning Beam Effect -->
+  <rect class="scan-beam" width="1000" height="1000" fill="url(#beamGrad)" />
+
+  <!-- Neural-style background network -->
+  <g class="floating-layer" opacity="0.15">
+    <line x1="100" y1="100" x2="400" y2="300" stroke="#3b82f6" stroke-width="0.5" />
+    <line x1="400" y1="300" x2="200" y2="600" stroke="#3b82f6" stroke-width="0.5" />
+    <line x1="200" y1="600" x2="100" y2="100" stroke="#3b82f6" stroke-width="0.5" />
+    <circle class="node" cx="100" cy="100" r="4" fill="#60a5fa" />
+    <circle class="node" cx="400" cy="300" r="4" fill="#a78bfa" style="animation-delay: 1s" />
+    <circle class="node" cx="200" cy="600" r="4" fill="#3b82f6" style="animation-delay: 2.5s" />
+    
+    <g transform="translate(1500, 100)">
+      <circle class="node" cx="0" cy="0" r="4" fill="#a78bfa" />
+      <circle class="node" cx="200" cy="150" r="4" fill="#60a5fa" style="animation-delay: 1.5s" />
+      <line x1="0" y1="0" x2="200" y2="150" stroke="#a78bfa" stroke-width="0.5" />
+    </g>
+  </g>
+
+  <!-- High-Fidelity ECG Pulse (Ultra Dynamic) -->
+  <path class="heartbeat-line" d="M -100 500 h200 l15 -30 l15 60 l15 -30 h200 l20 -150 l30 300 l30 -150 h200 l10 -20 l10 40 l10 -20 h200 l15 -30 l15 60 l15 -30 h300 l25 -250 l40 500 l40 -250 h400" 
+        fill="none" 
+        stroke="#60a5fa" 
+        stroke-width="3" 
+        filter="url(#softGlow)" 
+        opacity="0.4" />
+
+  <!-- Beautiful floating 3D medical icons -->
+  <g class="floating-layer">
+    <!-- Heart Icon -->
+    <g transform="translate(1700, 300)">
+      <path class="medical-icon" d="M -20 -20 a15 15 0 0 1 30 0 c0 15 -30 30 -30 30 s-30 -15 -30 -30 a15 15 0 0 1 30 0" fill="none" stroke="#f472b6" stroke-width="2" opacity="0.3" filter="url(#softGlow)" />
+    </g>
+    
+    <!-- DNA Helix -->
+    <g transform="translate(200, 800) scale(2.5)">
+      <path class="medical-icon" d="M0 0 q10 20 0 40 m12 -40 q-10 20 0 40" stroke="#a78bfa" stroke-width="1.5" opacity="0.25" />
+    </g>
+
+    <!-- Lab Flask -->
+    <g transform="translate(1800, 850)">
+      <path class="medical-icon" d="M -15 30 l-15 30 h60 l-15 -30 v-20 h-30 v20 z" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.2" />
+    </g>
+  </g>
+
+  <!-- Readability Mask (Deep dark overlay to protect text) -->
+  <rect width="2000" height="1000" fill="radial-gradient(circle, transparent 30%, #05070a 100%)" opacity="0.5" />
+</svg>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explainable AI | Quantum Analytics</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="explainable_ai.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body
+    class="bg-gray-900 text-gray-100 font-sans antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-green-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-900/10 rounded-full blur-[120px]">
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex min-h-screen flex-col">
+
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full shadow-[0_0_15px_rgba(34,197,94,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">
+                        EXPLAINABLE <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">AI</span>
+                    </h1>
+                </div>
+
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="analytics.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Analytics</a>
+                    <a href="statistics.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Statistics</a>
+                    <a href="feature_maps.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Feature Maps</a>
+                    <a href="circuit_interactive.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Insight</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-7xl mx-auto space-y-6">
+
+                <!-- Page Title -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">🤖 Explainable AI</h2>
+                    <p class="text-gray-400">Understand how the quantum model makes diagnostic decisions</p>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-500"></span>
+                            Upload Medical Image for Decision Explanation
+                        </h3>
+                    </div>
+
+                    <div id="upload-zone"
+                        class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:border-green-500/50 transition-colors"
+                        onclick="document.getElementById('imageInput').click()">
+                        <div class="text-4xl mb-2">🔬</div>
+                        <p class="text-gray-300 font-medium">Drop an endoscopy image here</p>
+                        <p class="text-gray-500 text-sm mt-1">or click to browse</p>
+                        <input type="file" id="imageInput" accept="image/*" hidden onchange="handleImageUpload(event)">
+                    </div>
+                </div>
+
+                <!-- Decision Explanation Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- Original Image -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gray-500"></span>
+                            Original Input
+                        </h3>
+                        <div
+                            class="relative aspect-square bg-gray-800/50 rounded-lg overflow-hidden flex items-center justify-center">
+                            <img id="original-image" src="" alt="Original"
+                                class="hidden max-w-full max-h-full object-contain">
+                            <div id="original-placeholder" class="text-gray-600 text-center">
+                                <div class="text-3xl mb-2">🖼️</div>
+                                <p class="text-sm">Upload image</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grad-CAM Heatmap -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-red-500 to-yellow-500"></span>
+                            Grad-CAM Decision Regions
+                        </h3>
+                        <div class="relative aspect-square bg-gray-800/50 rounded-lg overflow-hidden">
+                            <canvas id="gradcam-canvas" class="hidden absolute inset-0 w-full h-full"></canvas>
+                            <div id="gradcam-placeholder"
+                                class="absolute inset-0 flex items-center justify-center text-gray-600 text-center">
+                                <div>
+                                    <div class="text-3xl mb-2">🔥</div>
+                                    <p class="text-sm">Decision heatmap</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Output -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></span>
+                            AI Decision
+                        </h3>
+                        <div class="space-y-4">
+                            <div id="decision-container" class="text-center py-8">
+                                <div class="text-gray-600 text-3xl mb-2">❓</div>
+                                <p class="text-gray-500 text-sm">Awaiting analysis</p>
+                            </div>
+                            <div id="decision-result" class="hidden">
+                                <div class="text-center mb-4">
+                                    <div id="decision-icon" class="text-5xl mb-2">🟢</div>
+                                    <h4 id="decision-text" class="text-2xl font-bold text-white">Healthy</h4>
+                                    <p id="decision-confidence" class="text-gray-400 text-sm mt-1">Confidence: 96.2%</p>
+                                </div>
+                                <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                                    <div id="confidence-bar"
+                                        class="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-500"
+                                        style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Legend -->
+                <div class="p-4 rounded-xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-400">Decision Importance:</span>
+                            <div
+                                class="w-48 h-4 rounded bg-gradient-to-r from-blue-600 via-green-500 via-yellow-500 to-red-600">
+                            </div>
+                            <span class="text-xs text-gray-500">Low → High</span>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            <span class="text-green-400">●</span> Areas influencing "Healthy" |
+                            <span class="text-red-400">●</span> Areas influencing "Ulcerative Colitis Positive"
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Decision Factors -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"></span>
+                        Decision Factors Breakdown
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="factors-grid">
+                        <!-- Factor 1 -->
+                        <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-400 text-sm">Mucosal Texture</span>
+                                <span class="text-green-400 font-mono text-sm" id="factor1-score">--</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div id="factor1-bar" class="h-full bg-green-500 rounded-full transition-all"
+                                    style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Surface pattern analysis</p>
+                        </div>
+                        <!-- Factor 2 -->
+                        <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-400 text-sm">Vascular Pattern</span>
+                                <span class="text-cyan-400 font-mono text-sm" id="factor2-score">--</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div id="factor2-bar" class="h-full bg-cyan-500 rounded-full transition-all"
+                                    style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Blood vessel visibility</p>
+                        </div>
+                        <!-- Factor 3 -->
+                        <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-400 text-sm">Color Distribution</span>
+                                <span class="text-purple-400 font-mono text-sm" id="factor3-score">--</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div id="factor3-bar" class="h-full bg-purple-500 rounded-full transition-all"
+                                    style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Erythema detection</p>
+                        </div>
+                        <!-- Factor 4 -->
+                        <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gray-400 text-sm">Ulceration Signs</span>
+                                <span class="text-orange-400 font-mono text-sm" id="factor4-score">--</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div id="factor4-bar" class="h-full bg-orange-500 rounded-full transition-all"
+                                    style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Lesion identification</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explanation Text -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500"></span>
+                        Natural Language Explanation
+                    </h3>
+                    <div id="explanation-text" class="text-gray-300 leading-relaxed">
+                        <p class="text-gray-500 italic">Upload an image to receive an AI-generated explanation of the
+                            diagnostic decision...</p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500">
+            Ulcerative Colitis Prediction QML | Explainable AI Module - Understanding Model Decisions
+        </footer>
+    </div>
+
+    <script src="explainable_ai.js"></script>
+</body>
+
+</html>

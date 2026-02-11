@@ -1,0 +1,22 @@
+pymongo
+fastapi
+uvicorn
+python-multipart
+qiskit
+qiskit-machine-learning
+torch
+torchvision
+scikit-learn
+numpy
+pandas
+pillow
+matplotlib
+
+# FQDN Enhancements
+pennylane>=0.30.0
+pennylane-qiskit>=0.30.0
+shap>=0.42.0
+seaborn>=0.12.0
+plotly>=5.14.0
+kaggle>=1.5.0
+opencv-python>=4.8.0

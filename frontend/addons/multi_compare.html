@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Image Comparison | Quantum Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="multi_compare.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-gray-100 font-sans antialiased">
+    <!-- Background -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-900/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 flex min-h-screen flex-col">
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-blue-400 to-cyan-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold text-white">
+                        MULTI-IMAGE <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">COMPARISON</span>
+                    </h1>
+                </div>
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html" class="text-sm text-gray-400 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="analytics.html"
+                        class="text-sm text-gray-400 hover:text-cyan-400 transition-colors">Analytics</a>
+                    <a href="explainable_ai.html"
+                        class="text-sm text-gray-400 hover:text-cyan-400 transition-colors">XAI</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-7xl mx-auto space-y-6">
+                <!-- Title -->
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-white mb-2">🖼️ Multi-Image Comparison</h2>
+                    <p class="text-gray-400">Compare multiple endoscopy frames to identify the most severe area</p>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></span>
+                            Upload Multiple Images (Up to 6)
+                        </h3>
+                        <button onclick="analyzeAll()"
+                            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity">
+                            🔍 Analyze All
+                        </button>
+                    </div>
+                    <div id="upload-zone"
+                        class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500/50 transition-colors"
+                        onclick="document.getElementById('multiFileInput').click()">
+                        <div class="text-4xl mb-2">📁</div>
+                        <p class="text-gray-300 font-medium">Drop multiple images or click to select</p>
+                        <p class="text-gray-500 text-sm mt-1">Select 2-6 endoscopy frames for comparison</p>
+                        <input type="file" id="multiFileInput" accept="image/*" multiple hidden
+                            onchange="handleMultiUpload(event)">
+                    </div>
+                </div>
+
+                <!-- Image Grid -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-pink-500"></span>
+                        Comparison Grid
+                    </h3>
+                    <div id="image-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Placeholder slots -->
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">1</span>
+                        </div>
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">2</span>
+                        </div>
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">3</span>
+                        </div>
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">4</span>
+                        </div>
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">5</span>
+                        </div>
+                        <div
+                            class="image-slot aspect-square rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-600">
+                            <span class="text-4xl">6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Summary -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md" id="results-section"
+                    style="display: none;">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-red-400 to-orange-500"></span>
+                        Analysis Results
+                    </h3>
+
+                    <!-- Worst Case Alert -->
+                    <div id="worst-case-alert" class="p-4 rounded-xl bg-red-900/20 border border-red-500/30 mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">⚠️</span>
+                            <div>
+                                <h4 class="text-red-400 font-semibold">Most Severe Frame Detected</h4>
+                                <p class="text-gray-400 text-sm">Image <span id="worst-image-num"
+                                        class="text-red-400 font-bold">3</span> shows the highest severity score</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="py-3 px-4 text-left text-gray-400">Frame</th>
+                                    <th class="py-3 px-4 text-center text-gray-400">Prediction</th>
+                                    <th class="py-3 px-4 text-center text-gray-400">Confidence</th>
+                                    <th class="py-3 px-4 text-center text-gray-400">Severity Score</th>
+                                    <th class="py-3 px-4 text-center text-gray-400">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Comparison Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-xl border border-gray-800 bg-gray-900/40 text-center">
+                        <div class="text-3xl mb-2">📊</div>
+                        <h4 class="text-cyan-400 font-semibold">Total Frames</h4>
+                        <p id="total-frames" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-gray-800 bg-gray-900/40 text-center">
+                        <div class="text-3xl mb-2">🔴</div>
+                        <h4 class="text-red-400 font-semibold">Positive Detections</h4>
+                        <p id="positive-count" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-gray-800 bg-gray-900/40 text-center">
+                        <div class="text-3xl mb-2">🟢</div>
+                        <h4 class="text-green-400 font-semibold">Healthy Frames</h4>
+                        <p id="healthy-count" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500">
+            UC Prediction QML | Multi-Image Comparison Module
+        </footer>
+    </div>
+
+    <script src="multi_compare.js"></script>
+</body>
+
+</html>

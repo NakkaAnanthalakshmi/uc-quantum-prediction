@@ -1,0 +1,22 @@
+# Master Orchestration for Ulcerative Colitis Prediction QML
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: qml-backend
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URI=mongodb://host.docker.internal:27017/
+    # Note: host.docker.internal allows the container to talk to your local MongoDB Compass
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build: ./frontend
+    container_name: qml-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

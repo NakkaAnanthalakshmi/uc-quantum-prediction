@@ -1,0 +1,48 @@
+/* Statistics Page Styles */
+body {
+    background-color: #05080f;
+    background-image: url('../medical_ultimate_live.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    color: #e2e8f0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Table Row Hover */
+tbody tr:hover {
+    background: rgba(139, 92, 246, 0.05);
+}
+
+/* Metric Cards Animation */
+.metric-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.1);
+}
+
+/* Chart Container */
+canvas {
+    max-height: 100%;
+}

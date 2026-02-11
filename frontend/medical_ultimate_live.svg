@@ -1,0 +1,106 @@
+<svg width="100%" height="100%" viewBox="0 0 2000 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Background Depth Gradient -->
+    <radialGradient id="deepBlueGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#141a4d" />
+      <stop offset="100%" stop-color="#05080f" />
+    </radialGradient>
+    
+    <!-- Neon Scanner Gradient -->
+    <linearGradient id="scanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="transparent" />
+      <stop offset="50%" stop-color="rgba(34, 211, 238, 0.3)" />
+      <stop offset="100%" stop-color="transparent" />
+    </linearGradient>
+
+    <!-- Vulnerability/Pulse Gradient -->
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(192, 132, 252, 0)" />
+      <stop offset="50%" stop-color="rgba(192, 132, 252, 0.1)" />
+      <stop offset="100%" stop-color="rgba(192, 132, 252, 0)" />
+    </linearGradient>
+    
+    <!-- Glow Filter -->
+    <filter id="vibrantGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="lightGlow">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    @keyframes sweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    @keyframes heartRate {
+      0% { stroke-dashoffset: 4000; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @keyframes rotateDNA {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+    @keyframes floatParticles {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(50px, -30px); }
+      50% { transform: translate(-20px, 40px); }
+      75% { transform: translate(30px, 20px); }
+    }
+    @keyframes pulseCircle {
+      0%, 100% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.2); opacity: 0.5; }
+    }
+
+    .scanner { animation: sweep 10s ease-in-out infinite; }
+    .ecg { stroke-dasharray: 2000; animation: heartRate 8s linear infinite; }
+    .dna { transform-origin: center; animation: rotateDNA 15s linear infinite; }
+    .particles { animation: floatParticles 30s ease-in-out infinite; }
+    .pulse { transform-origin: center; animation: pulseCircle 5s ease-in-out infinite; }
+  </style>
+
+  <!-- Base Layer -->
+  <rect width="2000" height="1000" fill="url(#deepBlueGrad)" />
+
+  <!-- Live Scanning Waves (Super Visible) -->
+  <rect class="scanner" width="800" height="1000" fill="url(#scanGrad)" />
+  <rect class="scanner" width="400" height="1000" fill="url(#scanGrad)" style="animation-delay: -5s; animation-duration: 15s;" />
+
+  <!-- Multiple Super Vibrant Heartbeat Lines -->
+  <g filter="url(#vibrantGlow)">
+    <path class="ecg" d="M -100 500 h200 l20 -40 l20 80 l20 -40 h200 l30 -200 l40 400 l40 -200 h200 l15 -30 l15 60 l15 -30 h200 l25 -300 l35 600 l35 -300 h400 l10 -20 l10 40 l10 -20 h200" 
+          fill="none" stroke="#06b6d4" stroke-width="5" />
+    <path class="ecg" d="M -500 400 h300 l15 -30 l15 60 l15 -30 h300 l25 -150 l35 300 l35 -150 h300 l10 -20 l10 40 l10 -20 h400" 
+          fill="none" stroke="#d946ef" stroke-width="3" style="animation-delay: -4s; animation-duration: 12s;" />
+  </g>
+
+  <!-- 3D Medical Models / Floating Elements -->
+  <g class="particles">
+    <!-- Floating Hexagon Cluster -->
+    <g transform="translate(1600, 200)">
+      <circle class="pulse" r="60" fill="rgba(6, 182, 212, 0.1)" stroke="rgba(6, 182, 212, 0.4)" stroke-width="1" />
+      <path d="M30 0 L60 17 L60 51 L30 68 L0 51 L0 17 Z" transform="translate(-30, -34)" fill="rgba(255, 255, 255, 0.05)" stroke="#ffffff" stroke-width="1.5" opacity="0.6" />
+      <path d="M-10 0 h20 M0 -10 v20" stroke="#ffffff" stroke-width="3" opacity="0.8" />
+    </g>
+
+    <!-- Another Cluster Bottom Left -->
+    <g transform="translate(300, 800)">
+        <circle class="pulse" r="80" fill="rgba(217, 70, 239, 0.05)" stroke="rgba(217, 70, 239, 0.2)" style="animation-delay: -2s;" />
+        <path d="M40 0 L80 23 L80 69 L40 92 L0 69 L0 23 Z" transform="translate(-40, -46)" fill="none" stroke="#d946ef" stroke-width="2" opacity="0.5" filter="url(#lightGlow)" />
+    </g>
+  </g>
+
+  <!-- Glowing Bokeh Particles -->
+  <circle cx="800" cy="200" r="4" fill="#ffffff" filter="url(#lightGlow)">
+    <animate attributeName="opacity" values="0.1;0.9;0.1" dur="3s" repeatCount="indefinite" />
+  </circle>
+  <circle cx="1200" cy="700" r="6" fill="#06b6d4" filter="url(#lightGlow)">
+    <animate attributeName="opacity" values="0.1;0.8;0.1" dur="5s" repeatCount="indefinite" />
+  </circle>
+</svg>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Lab - Ulcerative Colitis Prediction QML</title>
+    <link rel="stylesheet" href="dashboard.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="../config.js?v=4"></script>
+    <style>
+        body {
+            background-image: url('../medical_ultimate_live.svg') !important;
+            background-size: cover;
+            background-attachment: fixed;
+            background-color: #05080f !important;
+        }
+
+        .container {
+            background: rgba(10, 14, 26, 0.4) !important;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Force visibility of search card */
+        #clinical-search-wrapper {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <h1>🧪 Advanced Lab</h1>
+                <p style="color: var(--text-dim); font-size: 0.9rem;">Model Persistence & Configuration Comparison</p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="analytics.html" class="back-btn"
+                    style="border-color: var(--accent-cyan); color: var(--accent-cyan);">📊 Analytics</a>
+                <a href="statistics.html" class="back-btn"
+                    style="border-color: var(--accent-purple); color: var(--accent-purple);">📈 Statistics</a>
+                <a href="feature_maps.html" class="back-btn" style="border-color: #f97316; color: #f97316;">🗺️ Feature
+                    Maps</a>
+                <a href="compare.html" class="back-btn"
+                    style="border-color: var(--accent-purple); color: var(--accent-purple);">🔍 Compare</a>
+                <a href="../index.html" class="back-btn">← Back to Diagnosis</a>
+            </div>
+        </header>
+
+        <!-- Clinical Search Bar -->
+        <div id="clinical-search-wrapper" class="card" style="padding: 1.5rem;">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="flex: 1; position: relative;">
+                    <span
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.1rem;">🔍</span>
+                    <input type="text" id="diagnostic-search-input"
+                        placeholder="Search Patient History (ID or Prediction)..."
+                        style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.8rem 1rem 0.8rem 2.8rem; color: white; font-size: 0.95rem;">
+                </div>
+                <button class="btn-primary" style="width: auto; margin: 0; padding: 0.8rem 2rem;" id="search-btn">SEARCH
+                    RECORDS</button>
+            </div>
+            <div id="search-results-dropdown"
+                style="display: none; margin-top: 1rem; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto;">
+                <!-- Search results injected here -->
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Training Module -->
+            <div class="card">
+                <h2>📊 Live Training Module</h2>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">
+                    Simulate training the Quantum Kernel on local medical datasets.
+                </p>
+                <div class="training-stats">
+                    <div
+                        style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                        <span>Select Training Files:</span>
+                        <a href="#" id="refresh-files"
+                            style="color: var(--accent-purple); text-decoration: none; font-size: 0.7rem;">⟳ Refresh</a>
+                    </div>
+                    <div id="file-checklist"
+                        style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.8rem; height: 120px; overflow-y: auto; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+                        <p style="color: var(--text-dim); font-size: 0.75rem;">Loading available datasets...</p>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                        <span>Training Progress</span>
+                        <span id="progress-val">0%</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div id="training-progress"></div>
+                </div>
+                <div id="epoch-log"
+                    style="font-size: 0.75rem; color: var(--text-dim); height: 60px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.5rem; margin: 1rem 0;">
+                    Waiting to start...
+                </div>
+
+                <button class="btn-primary" id="start-training">START TRAINING CYCLE</button>
+            </div>
+
+            <!-- Model Comparison -->
+            <div class="card">
+                <h2>📈 Circuit Comparison Dashboard</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Configuration</th>
+                            <th>Accuracy</th>
+                            <th>Depth</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <div style="margin-top: 2rem;">
+                    <h2>💾 Model Persistence</h2>
+                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">
+                        Save your current configuration to <code>backend/saved_models/</code>
+                    </p>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <input type="text" id="save-name" placeholder="Model Name (e.g. Exp_Alpha)"
+                            style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.8rem; color: white;">
+                        <button class="btn-primary" style="width: auto; margin-top: 0;" id="save-btn">SAVE NOW</button>
+                    </div>
+
+                    <h2>📂 Saved Model Inventory</h2>
+                    <div id="model-inventory" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <!-- Populated by JS -->
+                        <p style="color: var(--text-dim); font-size: 0.85rem;">Checking for saved models...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js?v=4"></script>
+</body>
+
+</html>

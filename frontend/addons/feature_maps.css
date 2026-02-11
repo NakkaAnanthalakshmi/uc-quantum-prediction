@@ -1,0 +1,71 @@
+/* Feature Maps Page Styles */
+body {
+    background-color: #05080f;
+    background-image: url('../medical_ultimate_live.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    color: #e2e8f0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Upload Zone */
+#upload-zone {
+    transition: all 0.3s ease;
+}
+
+#upload-zone:hover {
+    background: rgba(251, 146, 60, 0.05);
+}
+
+#upload-zone.dragover {
+    border-color: #f97316;
+    background: rgba(251, 146, 60, 0.1);
+}
+
+/* Heatmap Container */
+#heatmap-container {
+    position: relative;
+}
+
+#heatmap-canvas {
+    image-rendering: pixelated;
+}
+
+/* Table Row Hover */
+tbody tr:hover {
+    background: rgba(251, 146, 60, 0.05);
+}
+
+/* Loading Animation */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

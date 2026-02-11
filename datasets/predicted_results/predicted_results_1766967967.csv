@@ -1,0 +1,2 @@
+Patient_ID,Prediction,IsPositive,Confidence,CRP,ESR
+UP0001,Healthy (Negative),False,93.17843730887662,8.91,10

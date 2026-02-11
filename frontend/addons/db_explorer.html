@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Database Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <script src="../config.js"></script>
+    <style>
+        :root {
+            --bg-dark: #05080f;
+            --card-bg: rgba(23, 28, 48, 0.7);
+            --accent-purple: #c084fc;
+            --accent-cyan: #3b82f6;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: url('../medical_ultimate_live.svg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .folder-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .folder-btn.active {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: white;
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .record-card {
+            transition: transform 0.2s;
+        }
+
+        .record-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+        }
+
+        .img-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #1e293b;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-12">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">📊 Database Explorer</h1>
+                <p class="text-text-dim">MongoDB Persistent Storage Viewer - Live from <code
+                        class="text-accent-cyan">quantum_clinical_db</code></p>
+            </div>
+            <a href="../index.html"
+                class="px-6 py-3 rounded-full border border-gray-700 hover:bg-white/5 transition-all text-sm font-medium">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Storage Sync Banner -->
+        <div class="glass-card bg-emerald-500/5 border-emerald-500/20 p-4 mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                    <span class="animate-pulse">●</span>
+                </div>
+                <div>
+                    <div class="text-emerald-400 font-bold text-sm uppercase tracking-wider">Storage Sync</div>
+                    <div class="text-xs text-emerald-300/70">Connected to local instance (localhost:27017). Records are
+                        immutable and synced in real-time.</div>
+                </div>
+            </div>
+            <div
+                class="px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-[10px] text-emerald-400 font-mono">
+                LIVE / CONNECTED
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Sidebar / Folders -->
+            <div class="lg:col-span-1 space-y-4">
+                <button onclick="switchFolder('predictions')" id="btn-predictions"
+                    class="folder-btn active w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">📸</div>
+                    <div>
+                        <div class="font-bold">Image Records</div>
+                        <div class="text-xs opacity-60">Single Patient Tests</div>
+                    </div>
+                </button>
+
+                <button onclick="switchFolder('circuits')" id="btn-circuits"
+                    class="folder-btn w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">⚛️</div>
+                    <div>
+                        <div class="font-bold">Circuit Library</div>
+                        <div class="text-xs opacity-60">Quantum Logic States</div>
+                    </div>
+                </button>
+
+                <button onclick="switchFolder('batch')" id="btn-batch"
+                    class="folder-btn w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">📁</div>
+                    <div>
+                        <div class="font-bold">Batch Logs</div>
+                        <div class="text-xs opacity-60">CSV Inference History</div>
+                    </div>
+                </button>
+
+                <button onclick="switchFolder('xai')" id="btn-xai"
+                    class="folder-btn w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">🧠</div>
+                    <div>
+                        <div class="font-bold">XAI Analysis</div>
+                        <div class="text-xs opacity-60">Saliency Heatmaps</div>
+                    </div>
+                </button>
+
+                <button onclick="switchFolder('ensemble')" id="btn-ensemble"
+                    class="folder-btn w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">🗳️</div>
+                    <div>
+                        <div class="font-bold">Ensemble Votes</div>
+                        <div class="text-xs opacity-60">Multi-Model Decisions</div>
+                    </div>
+                </button>
+
+                <button onclick="switchFolder('training')" id="btn-training"
+                    class="folder-btn w-full p-4 glass-card flex items-center gap-4 text-left">
+                    <div class="text-2xl">🏋️</div>
+                    <div>
+                        <div class="font-bold">Model Training</div>
+                        <div class="text-xs opacity-60">Centroid Sessions</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Records Grid -->
+                <div id="records-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be injected here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="loading-state" class="hidden flex flex-col items-center justify-center py-20 text-text-dim">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-cyan mb-4"></div>
+                    <p>Fetching data from MongoDB...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        const API_BASE = window.API_CONFIG ? window.API_CONFIG.API_URL : "http://localhost:8001";
+        let dbData = null;
+        let currentFolder = 'predictions';
+
+        async function fetchRecords() {
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('records-grid').innerHTML = '';
+
+            try {
+                const res = await fetch(`${API_BASE}/db-history`);
+                dbData = await res.json();
+                renderCurrentFolder();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('records-grid').innerHTML = `
+                    <div class="col-span-full text-center py-20 text-red-400">
+                        Connection Error: Make sure the server and MongoDB are running.
+                    </div>
+                `;
+            } finally {
+                document.getElementById('loading-state').classList.add('hidden');
+            }
+        }
+
+        function switchFolder(folder) {
+            currentFolder = folder;
+            document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${folder}`).classList.add('active');
+            renderCurrentFolder();
+        }
+
+        function renderCurrentFolder() {
+            if (!dbData) return;
+            const records = dbData[currentFolder] || [];
+            const grid = document.getElementById('records-grid');
+            grid.innerHTML = '';
+
+            if (records.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-text-dim">No records found in this collection.</div>';
+                return;
+            }
+
+            records.forEach(rec => {
+                const date = new Date(rec.timestamp.$date || rec.timestamp).toLocaleString();
+                let cardHtml = '';
+
+                if (currentFolder === 'predictions') {
+                    const isPos = rec.prediction.includes('Positive') || rec.prediction.includes('Ulcerative');
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 ${isPos ? 'border-l-red-500' : 'border-l-emerald-500'}">
+                            ${rec.image ? `<img src="data:image/png;base64,${rec.image}" class="img-preview mb-4">` : '<div class="img-preview mb-4 flex items-center justify-center text-xs opacity-30 text-center px-4">No Image Stored (Clinical Data)</div>'}
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-2 truncate">${rec.patient_id}</div>
+                            <div class="flex justify-between items-center">
+                                <span class="px-2 py-1 rounded-md bg-white/5 text-[10px] font-bold ${isPos ? 'text-red-400' : 'text-emerald-400'}">${rec.prediction.toUpperCase()}</span>
+                                <span class="text-xs font-mono opacity-60">${rec.confidence}</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentFolder === 'xai') {
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 border-l-orange-500">
+                            <div class="flex gap-2 mb-4">
+                                <img src="data:image/png;base64,${rec.original}" class="w-1/2 h-24 object-cover rounded-lg">
+                                <img src="data:image/png;base64,${rec.heatmap}" class="w-1/2 h-24 object-cover rounded-lg">
+                            </div>
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-1 truncate">${rec.patient_id}</div>
+                            <div class="text-[10px] opacity-80 line-clamp-2">${rec.analysis.conclusion}</div>
+                        </div>
+                    `;
+                } else if (currentFolder === 'circuits') {
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 border-l-accent-cyan">
+                            <img src="data:image/png;base64,${rec.diagram}" class="img-preview mb-4" style="background: #0f172a; object-fit: contain;">
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-1">${rec.metadata.source || 'Circuit Experiment'}</div>
+                            <div class="text-[10px] opacity-60 truncate font-mono">ID: ${rec._id.$oid}</div>
+                        </div>
+                    `;
+                } else if (currentFolder === 'ensemble') {
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 border-l-pink-500">
+                            <div class="text-3xl mb-4">⚖️</div>
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-2">Consolidated Vote</div>
+                            <div class="flex justify-between text-[10px] mb-2">
+                                <span class="text-pink-400 font-bold">${rec.final_decision.prediction}</span>
+                                <span class="text-gray-400">${rec.final_decision.confidence.toFixed(1)}%</span>
+                            </div>
+                            <div class="text-[9px] opacity-60">Weighted: ${Object.values(rec.weights).join('/')}</div>
+                        </div>
+                    `;
+                } else if (currentFolder === 'training') {
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 border-l-blue-500">
+                            <div class="text-3xl mb-4">⚙️</div>
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-2">Training Session</div>
+                            <div class="text-[10px] opacity-60">Files Processed: ${(rec.history || []).length}</div>
+                            <div class="text-[10px] opacity-60">Config: reps=${rec.config.reps}, ent=${rec.config.entanglement}</div>
+                        </div>
+                    `;
+                } else {
+                    cardHtml = `
+                        <div class="glass-card p-4 record-card border-l-4 border-l-accent-purple">
+                            <div class="text-4xl mb-4">📄</div>
+                            <div class="text-xs text-text-dim mb-1">${date}</div>
+                            <div class="font-bold text-sm mb-2 truncate">${rec.filename || 'Batch Analysis'}</div>
+                            <div class="text-xs opacity-60">Items: ${rec.num_images || (rec.summary && rec.summary.total) || 'N/A'}</div>
+                        </div>
+                    `;
+                }
+                grid.innerHTML += cardHtml;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchRecords);
+    </script>
+</body>
+
+</html>

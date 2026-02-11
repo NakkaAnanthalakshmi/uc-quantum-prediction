@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ulcerative Colitis Prediction QML - Advanced Diagnostics</title>
+    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container" id="main-content">
+        <header id="main-header">
+            <!-- Connectivity Monitor LED -->
+            <div id="api-status-monitor" class="api-status-monitor">
+                <div id="api-status-led" class="api-status-led"></div>
+                <span id="api-status-text">DATABASE: CHECKING...</span>
+            </div>
+
+            <div class="header-top">
+                <div class="title-group"
+                    style="display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 1.5rem !important; flex-wrap: nowrap !important; margin-bottom: 0 !important; width: 100% !important;">
+                    <h1
+                        style="font-size: 3.5rem !important; font-weight: 800 !important; margin: 0 !important; background: linear-gradient(90deg, #a78bfa, #f472b6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2 !important; white-space: nowrap !important;">
+                        Ulcerative Colitis Prediction QML</h1>
+                    <a href="addons/dashboard.html" class="advanced-lab-btn" title="Experimental Training & Model Lab"
+                        style="text-decoration: none !important; color: #000000 !important; border: 2px solid #ffffff !important; padding: 0.6rem 1.2rem !important; border-radius: 12px !important; font-size: 0.9rem !important; font-weight: 800 !important; background: #c084fc !important; display: flex !important; align-items: center !important; gap: 0.5rem; white-space: nowrap !important; box-shadow: 0 0 20px rgba(192, 132, 252, 0.4) !important;">
+                        <span style="font-size: 1.2rem;">🧪</span>
+                        <span>Advanced Lab</span>
+                    </a>
+                </div>
+                <p class="subtitle"
+                    style="color: #ffffff !important; font-size: 2.2rem !important; font-weight: 700 !important; margin-top: 0 !important; margin-bottom: 0 !important; text-shadow: 0 0 20px rgba(192, 132, 252, 0.4) !important; line-height: 1.2 !important; text-align: center !important; letter-spacing: -0.5px !important; width: 100% !important;">
+                    Advanced Hybrid Quantum-Classical Diagnostics</p>
+                <p class="project-description">
+                    Ulcerative Colitis is a chronic inflammatory bowel disease that causes long-lasting inflammation
+                    and ulcers in your digestive tract.
+                    This project leverages Hybrid Quantum-Classical Machine Learning to provide highly accurate,
+                    rapid diagnostic insights by analyzing complex medical imaging and clinical data.
+                </p>
+            </div>
+        </header>
+
+        <nav class="tabs-container" id="main-tabs">
+            <button class="tab-btn active" onclick="switchMainTab(event, 'single')">Single Media</button>
+            <button class="tab-btn" onclick="switchMainTab(event, 'batch')">Image Dataset</button>
+            <button class="tab-btn" onclick="switchMainTab(event, 'csv')">Clinical CSV</button>
+            <a href="addons/compare.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">Compare
+                Circuits</a>
+            <a href="addons/analytics.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">Analytics</a>
+            <a href="addons/statistics.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">📊
+                Statistics</a>
+            <a href="addons/feature_maps.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🗺️
+                Maps</a>
+            <a href="addons/explainable_ai.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🤖
+                XAI</a>
+            <a href="addons/quantum_lab.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🔬
+                Lab</a>
+            <a href="addons/multi_compare.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🖼️
+                Grid</a>
+            <a href="addons/ensemble.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🧬
+                Ensemble</a>
+            <a href="addons/about_algorithm.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">📄
+                Docs</a>
+            <a href="addons/csv_predictor.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">📊
+                CSV Batch</a>
+            <a href="addons/db_explorer.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">🗄️
+                DB Explorer</a>
+            <a href="addons/circuit_interactive.html" class="tab-btn"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center; justify-content: center; height: 100%;">Insight</a>
+        </nav>
+
+        <!-- UPLOAD SECTIONS -->
+        <main id="single-view" class="main-card">
+            <div class="upload-zone" id="drop-zone" onclick="document.getElementById('fileInput').click()">
+                <div id="upload-prompt">
+                    <div class="upload-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p class="upload-text">Upload Media</p>
+                    <p class="upload-subtext">Drag & Drop Image or <b>Click to Browse</b></p>
+                </div>
+                <img id="preview-img" alt="Preview" style="display: none;">
+                <input type="file" id="fileInput" accept="image/*" hidden onchange="handleFileSelect(event)">
+            </div>
+            <button class="analyze-btn" id="analyze-btn" onclick="runAnalysis()" disabled>Analyze Case</button>
+        </main>
+
+        <main id="batch-view" class="main-card" style="display: none;">
+            <div class="upload-zone" onclick="document.getElementById('batchInput').click()">
+                <div class="upload-icon">📁</div>
+                <p class="upload-text">Upload Dataset</p>
+                <p class="upload-subtext">Select multiple images for batch analysis</p>
+                <input type="file" id="batchInput" multiple accept="image/*" hidden onchange="handleBatchSelect(event)">
+            </div>
+            <div id="batch-status" style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);"></div>
+            <button class="analyze-btn" id="batch-analyze-btn" onclick="runBatchAnalysis()" disabled>Analyze
+                Dataset</button>
+        </main>
+
+        <main id="csv-view" class="main-card" style="display: none;">
+            <div class="upload-zone" onclick="document.getElementById('csvInput').click()">
+                <div class="upload-icon">📄</div>
+                <p class="upload-text">Upload Clinical Data</p>
+                <p class="upload-subtext">Select CSV file for patient data analysis</p>
+                <input type="file" id="csvInput" accept=".csv" hidden onchange="handleCSVSelect(event)">
+            </div>
+            <div id="csv-status" style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);"></div>
+            <button class="analyze-btn" id="csv-analyze-btn" onclick="runCSVAnalysis()" disabled>Analyze Data</button>
+        </main>
+
+        <!-- RESULTS SECTION (Initially Hidden) -->
+        <section id="results-section" style="display: none; width: 100%;">
+            <div class="clinical-report-header" style="display: none;">
+                <h2 style="color: #000; margin: 0;">UC CLINICAL DIAGNOSTIC REPORT</h2>
+                <p style="color: #666; font-size: 0.8rem; margin: 0.5rem 0;">Generated: <span
+                        id="report-timestamp">-</span></p>
+                <hr style="border: 1px solid #eee; margin: 1rem 0;">
+            </div>
+
+            <h2 class="results-header">Analysis Results</h2>
+            <!-- CSV Batch Results Container -->
+            <div id="csv-summary-container" style="display: none; margin-bottom: 2rem;">
+                <!-- ... existing csv logic ... -->
+            </div>
+
+            <div class="results-grid">
+                <!-- Quantum Card -->
+                <div class="card result-card">
+                    <div class="card-title-row">
+                        <span>🧪 QUANTUM PROCESSING UNIT</span>
+                    </div>
+                    <div class="recommended-tag">
+                        ✨ HIGHLY RECOMMENDED
+                    </div>
+                    <div id="q-prediction" class="prediction-val">-</div>
+                    <div id="q-metrics" class="metrics-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Classical Card -->
+                <div class="card result-card">
+                    <div class="card-title-row">
+                        <span>🖥️ CLASSICAL PROCESSING UNIT</span>
+                    </div>
+                    <div id="c-prediction" class="prediction-val">-</div>
+
+                    <div class="confidence-bar-container" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="confidence-label">
+                            <span>Diagnostic Confidence</span>
+                            <b id="c-confidence-text">0%</b>
+                        </div>
+                        <div class="confidence-bar">
+                            <div id="c-confidence-fill" class="confidence-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div id="c-metrics" class="metrics-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <button class="show-circuit-btn" onclick="toggleCircuit(true)">Show Quantum Circuit Diagram</button>
+
+
+                <div class="system-note">
+                    <b>System Note:</b> Features extracted via ResNet18 (512 dims) → PCA (4 dims) →
+                    Quantum/Classical Classification.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- CIRCUIT OVERLAY (Full screen overlay) -->
+    <div id="circuit-overlay" class="circuit-overlay">
+        <div class="circuit-header">
+            <button class="back-btn" onclick="toggleCircuit(false)">← Back to Results</button>
+            <h3 style="font-size: 1.2rem; font-weight: 700;">Quantum Circuit Visualization</h3>
+            <div style="width: 100px;"></div>
+        </div>
+        <div id="circuit-container">
+            <img id="circuit-img" src="" alt="Circuit Diagram">
+        </div>
+    </div>
+
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+        <p>Processing Quantum States...</p>
+    </div>
+
+    <script src="config.js?v=4"></script>
+    <script src="script.js?v=4"></script>
+</body>
+
+</html>

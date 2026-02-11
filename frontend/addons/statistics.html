@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Analysis | Quantum Analytics</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="statistics.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body
+    class="bg-gray-900 text-gray-100 font-sans antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyan-900/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex min-h-screen flex-col">
+
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-purple-400 to-cyan-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">
+                        STATISTICAL <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-500">ANALYSIS</span>
+                    </h1>
+                </div>
+
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="dashboard.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Advanced Lab</a>
+                    <a href="analytics.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Analytics</a>
+                    <a href="circuit_interactive.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Insight</a>
+                    <a href="feature_maps.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Feature Maps</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-7xl mx-auto space-y-6">
+
+                <!-- Page Title -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">📊 Statistical Analysis</h2>
+                    <p class="text-gray-400">Confidence intervals, p-values, and statistical significance metrics</p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-5 rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                        <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold">P-Value (Quantum)</p>
+                        <h2 class="text-3xl font-bold text-green-400 mt-1" id="p-value-quantum">
+                            < 0.001</h2>
+                                <p class="text-xs text-gray-500 mt-1">Highly Significant</p>
+                    </div>
+                    <div class="p-5 rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                        <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Effect Size (Cohen's d)
+                        </p>
+                        <h2 class="text-3xl font-bold text-cyan-400 mt-1" id="effect-size">1.82</h2>
+                        <p class="text-xs text-gray-500 mt-1">Large Effect</p>
+                    </div>
+                    <div class="p-5 rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                        <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold">95% CI (Accuracy)</p>
+                        <h2 class="text-3xl font-bold text-purple-400 mt-1" id="confidence-interval">[94.2%, 98.1%]</h2>
+                        <p class="text-xs text-gray-500 mt-1">Bootstrap Estimate</p>
+                    </div>
+                    <div class="p-5 rounded-xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                        <p class="text-gray-400 text-xs uppercase tracking-wider font-semibold">Statistical Power</p>
+                        <h2 class="text-3xl font-bold text-yellow-400 mt-1" id="stat-power">0.95</h2>
+                        <p class="text-xs text-gray-500 mt-1">High Power</p>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Confidence Interval Chart -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500"></span>
+                                Confidence Intervals
+                            </h3>
+                            <span class="text-xs text-gray-500 font-mono">95% CI</span>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="ciChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- P-Value Distribution -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gradient-to-r from-green-400 to-cyan-500"></span>
+                                P-Value Distribution
+                            </h3>
+                            <span class="text-xs text-gray-500 font-mono">Permutation Test</span>
+                        </div>
+                        <div class="relative h-64 w-full">
+                            <canvas id="pvalueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-pink-500"></span>
+                        Quantum vs Classical Statistical Comparison
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-700 text-gray-400">
+                                    <th class="text-left py-3 px-4">Metric</th>
+                                    <th class="text-center py-3 px-4">Quantum (QSVC)</th>
+                                    <th class="text-center py-3 px-4">Classical (SVM)</th>
+                                    <th class="text-center py-3 px-4">P-Value</th>
+                                    <th class="text-center py-3 px-4">Significance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-table-body">
+                                <tr class="border-b border-gray-800">
+                                    <td class="py-3 px-4 text-gray-300">Accuracy</td>
+                                    <td class="py-3 px-4 text-center text-cyan-400 font-mono">96.2%</td>
+                                    <td class="py-3 px-4 text-center text-gray-400 font-mono">89.5%</td>
+                                    <td class="py-3 px-4 text-center text-green-400 font-mono">0.0012</td>
+                                    <td class="py-3 px-4 text-center"><span
+                                            class="px-2 py-1 rounded bg-green-900/50 text-green-400 text-xs">***</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-800">
+                                    <td class="py-3 px-4 text-gray-300">Precision</td>
+                                    <td class="py-3 px-4 text-center text-cyan-400 font-mono">95.8%</td>
+                                    <td class="py-3 px-4 text-center text-gray-400 font-mono">88.2%</td>
+                                    <td class="py-3 px-4 text-center text-green-400 font-mono">0.0034</td>
+                                    <td class="py-3 px-4 text-center"><span
+                                            class="px-2 py-1 rounded bg-green-900/50 text-green-400 text-xs">**</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-800">
+                                    <td class="py-3 px-4 text-gray-300">Sensitivity</td>
+                                    <td class="py-3 px-4 text-center text-cyan-400 font-mono">97.1%</td>
+                                    <td class="py-3 px-4 text-center text-gray-400 font-mono">87.1%</td>
+                                    <td class="py-3 px-4 text-center text-green-400 font-mono">
+                                        < 0.001</td>
+                                    <td class="py-3 px-4 text-center"><span
+                                            class="px-2 py-1 rounded bg-green-900/50 text-green-400 text-xs">***</span>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-800">
+                                    <td class="py-3 px-4 text-gray-300">Specificity</td>
+                                    <td class="py-3 px-4 text-center text-cyan-400 font-mono">95.2%</td>
+                                    <td class="py-3 px-4 text-center text-gray-400 font-mono">89.4%</td>
+                                    <td class="py-3 px-4 text-center text-yellow-400 font-mono">0.0421</td>
+                                    <td class="py-3 px-4 text-center"><span
+                                            class="px-2 py-1 rounded bg-yellow-900/50 text-yellow-400 text-xs">*</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 text-gray-300">AUC-ROC</td>
+                                    <td class="py-3 px-4 text-center text-cyan-400 font-mono">0.992</td>
+                                    <td class="py-3 px-4 text-center text-gray-400 font-mono">0.934</td>
+                                    <td class="py-3 px-4 text-center text-green-400 font-mono">0.0008</td>
+                                    <td class="py-3 px-4 text-center"><span
+                                            class="px-2 py-1 rounded bg-green-900/50 text-green-400 text-xs">***</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 text-xs text-gray-500">
+                        <span class="text-green-400">***</span> p < 0.001 | <span class="text-green-400">**</span> p <
+                                0.01 | <span class="text-yellow-400">*</span> p < 0.05 </div>
+                    </div>
+
+                    <!-- Bootstrap Distribution -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <span
+                                    class="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500"></span>
+                                Bootstrap Resampling Distribution (n=1000)
+                            </h3>
+                        </div>
+                        <div class="relative h-60 w-full">
+                            <canvas id="bootstrapChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500">
+            Ulcerative Colitis Prediction QML | Statistical Analysis Module
+        </footer>
+    </div>
+
+    <script src="statistics.js"></script>
+</body>
+
+</html>

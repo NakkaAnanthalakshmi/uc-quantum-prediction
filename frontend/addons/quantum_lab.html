@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Circuit Lab | Educational</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="quantum_lab.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body
+    class="bg-gray-900 text-gray-100 font-sans antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-900/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-900/10 rounded-full blur-[120px]">
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex min-h-screen flex-col">
+
+        <!-- Header -->
+        <header class="border-b border-gray-800 bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-2 h-8 bg-gradient-to-b from-indigo-400 to-violet-500 rounded-full shadow-[0_0_15px_rgba(129,140,248,0.5)]">
+                    </div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">
+                        QUANTUM <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-500">CIRCUIT
+                            LAB</span>
+                    </h1>
+                </div>
+
+                <nav class="flex items-center gap-6">
+                    <a href="../index.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Home</a>
+                    <a href="circuit_interactive.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Circuit
+                        Insight</a>
+                    <a href="analytics.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">Analytics</a>
+                    <a href="explainable_ai.html"
+                        class="text-sm font-medium text-gray-400 hover:text-cyan-400 transition-colors">XAI</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <div class="max-w-7xl mx-auto space-y-6">
+
+                <!-- Page Title -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-2">🔬 Quantum Circuit Lab</h2>
+                    <p class="text-gray-400">Understanding the Mathematics Behind Quantum Machine Learning</p>
+                </div>
+
+                <!-- Interactive Controls -->
+                <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                    <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-indigo-400 to-violet-500"></span>
+                        Circuit Configuration
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Entanglement Type -->
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Entanglement Type</label>
+                            <select id="entanglement-select"
+                                class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:border-indigo-500 focus:outline-none"
+                                onchange="updateCircuit()">
+                                <option value="linear">Linear Entanglement</option>
+                                <option value="circular">Circular Entanglement</option>
+                                <option value="full">Full Entanglement</option>
+                            </select>
+                        </div>
+
+                        <!-- Repetitions -->
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Layer Repetitions: <span id="reps-value"
+                                    class="text-indigo-400">2</span></label>
+                            <input type="range" id="reps-slider" min="1" max="4" value="2"
+                                class="w-full accent-indigo-500"
+                                oninput="document.getElementById('reps-value').textContent = this.value; updateCircuit();">
+                        </div>
+
+                        <!-- Qubits Display -->
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-2">Number of Qubits</label>
+                            <div
+                                class="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-4 py-3">
+                                <span class="text-2xl font-bold text-indigo-400">4</span>
+                                <span class="text-gray-500 text-sm">Fixed (from PCA reduction)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Math Explanation & Circuit Visualization -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Math Section -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500"></span>
+                            Mathematical Foundation
+                        </h3>
+
+                        <div class="space-y-4 text-gray-300" id="math-explanation">
+                            <!-- Initial State -->
+                            <div class="p-4 rounded-lg bg-gray-800/50 border border-gray-700">
+                                <h4 class="text-cyan-400 font-semibold mb-2">1. Initial State</h4>
+                                <p class="text-sm text-gray-400 mb-2">All qubits start in the ground state:</p>
+                                <div class="text-center py-2 font-mono text-lg">
+                                    \( |\psi_0\rangle = |0000\rangle \)
+                                </div>
+                            </div>
+
+                            <!-- Feature Encoding -->
+                            <div class="p-4 rounded-lg bg-gray-800/50 border border-gray-700">
+                                <h4 class="text-purple-400 font-semibold mb-2">2. Feature Encoding (ZZFeatureMap)</h4>
+                                <p class="text-sm text-gray-400 mb-2">Each feature \(x_i\) is encoded using rotation
+                                    gates:</p>
+                                <div class="text-center py-2 font-mono">
+                                    \( U_{\phi}(x) = \exp\left(i \sum_{j} x_j Z_j + \sum_{j<k} (\pi - x_j)(\pi - x_k)
+                                        Z_j Z_k\right) \) </div>
+                                </div>
+
+                                <!-- Entanglement -->
+                                <div class="p-4 rounded-lg bg-gray-800/50 border border-gray-700"
+                                    id="entanglement-math">
+                                    <h4 class="text-indigo-400 font-semibold mb-2">3. Entanglement Layer</h4>
+                                    <p class="text-sm text-gray-400 mb-2" id="entanglement-desc">Linear: Adjacent CNOT
+                                        gates create correlations between neighboring qubits.</p>
+                                    <div class="text-center py-2 font-mono" id="entanglement-formula">
+                                        \( CNOT_{01} \cdot CNOT_{12} \cdot CNOT_{23} \)
+                                    </div>
+                                </div>
+
+                                <!-- Kernel -->
+                                <div class="p-4 rounded-lg bg-gray-800/50 border border-gray-700">
+                                    <h4 class="text-green-400 font-semibold mb-2">4. Quantum Kernel</h4>
+                                    <p class="text-sm text-gray-400 mb-2">The kernel measures state overlap (fidelity):
+                                    </p>
+                                    <div class="text-center py-2 font-mono">
+                                        \( K(x, x') = |\langle\phi(x)|\phi(x')\rangle|^2 \)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Circuit Visualization -->
+                        <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-gradient-to-r from-violet-400 to-pink-500"></span>
+                                Circuit Diagram
+                            </h3>
+                            <div class="relative bg-gray-800/50 rounded-lg border border-gray-700 overflow-hidden"
+                                style="min-height: 350px;">
+                                <canvas id="labCircuitCanvas" class="w-full h-full" style="min-height: 350px;"></canvas>
+                                <div id="circuit-loading"
+                                    class="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+                                    <div class="text-center">
+                                        <div class="text-3xl animate-spin mb-2">⚛️</div>
+                                        <p class="text-gray-400 text-sm">Generating circuit...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-between text-xs text-gray-500 font-mono">
+                                <span id="gate-count">Gates: --</span>
+                                <span id="circuit-depth">Depth: --</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entanglement Patterns Explanation -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-orange-400 to-red-500"></span>
+                            Entanglement Patterns Explained
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Linear -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700 cursor-pointer hover:border-indigo-500/50 transition-colors"
+                                onclick="selectEntanglement('linear')">
+                                <h4 class="text-indigo-400 font-semibold mb-2">🔗 Linear</h4>
+                                <div class="text-xs font-mono text-gray-500 mb-2">Q0 → Q1 → Q2 → Q3</div>
+                                <p class="text-sm text-gray-400">CNOT gates connect adjacent qubits in a chain. Simplest
+                                    pattern with minimal gate count.</p>
+                                <div class="mt-2 text-xs text-gray-600">
+                                    <span class="text-cyan-400">3 CNOT gates</span> per layer
+                                </div>
+                            </div>
+
+                            <!-- Circular -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700 cursor-pointer hover:border-violet-500/50 transition-colors"
+                                onclick="selectEntanglement('circular')">
+                                <h4 class="text-violet-400 font-semibold mb-2">🔄 Circular</h4>
+                                <div class="text-xs font-mono text-gray-500 mb-2">Q0 → Q1 → Q2 → Q3 → Q0</div>
+                                <p class="text-sm text-gray-400">Like linear, but with an additional connection from
+                                    last to first qubit, forming a ring.</p>
+                                <div class="mt-2 text-xs text-gray-600">
+                                    <span class="text-cyan-400">4 CNOT gates</span> per layer
+                                </div>
+                            </div>
+
+                            <!-- Full -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700 cursor-pointer hover:border-pink-500/50 transition-colors"
+                                onclick="selectEntanglement('full')">
+                                <h4 class="text-pink-400 font-semibold mb-2">🕸️ Full</h4>
+                                <div class="text-xs font-mono text-gray-500 mb-2">All pairs connected</div>
+                                <p class="text-sm text-gray-400">Every qubit is entangled with every other qubit.
+                                    Maximum expressivity but highest gate count.</p>
+                                <div class="mt-2 text-xs text-gray-600">
+                                    <span class="text-cyan-400">6 CNOT gates</span> per layer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gate Legend -->
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-pink-500"></span>
+                            Gate Legend & Purpose
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Hadamard Gate -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+                                        style="background: linear-gradient(135deg, #06b6d4, #22d3ee);">H</div>
+                                    <div>
+                                        <h4 class="text-cyan-400 font-semibold">Hadamard</h4>
+                                        <span class="text-xs text-gray-500">Single Qubit</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">Creates superposition. Puts qubit into equal
+                                    probability of |0⟩ and |1⟩ states.</p>
+                                <div class="mt-2 text-xs font-mono text-cyan-300/70">
+                                    H|0⟩ = (|0⟩ + |1⟩)/√2
+                                </div>
+                            </div>
+
+                            <!-- RZ Gate -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+                                        style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">RZ</div>
+                                    <div>
+                                        <h4 class="text-purple-400 font-semibold">RZ Rotation</h4>
+                                        <span class="text-xs text-gray-500">Feature Encoding</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">Rotates around Z-axis. Encodes classical feature values
+                                    into quantum phases.</p>
+                                <div class="mt-2 text-xs font-mono text-purple-300/70">
+                                    RZ(θ) = e^(-iθZ/2)
+                                </div>
+                            </div>
+
+                            <!-- RX Gate -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+                                        style="background: linear-gradient(135deg, #ec4899, #f472b6);">RX</div>
+                                    <div>
+                                        <h4 class="text-pink-400 font-semibold">RX Rotation</h4>
+                                        <span class="text-xs text-gray-500">Variational</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">Rotates around X-axis. Trainable parameter that adjusts
+                                    during learning.</p>
+                                <div class="mt-2 text-xs font-mono text-pink-300/70">
+                                    RX(θ) = e^(-iθX/2)
+                                </div>
+                            </div>
+
+                            <!-- CNOT Gate -->
+                            <div class="p-4 rounded-xl bg-gray-800/50 border border-gray-700">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm relative"
+                                        style="background: linear-gradient(135deg, #f472b6, #a855f7);">
+                                        <span class="text-xs">CX</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-fuchsia-400 font-semibold">CNOT</h4>
+                                        <span class="text-xs text-gray-500">Two Qubit</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-400">Controlled-NOT. Creates entanglement between qubits for
+                                    quantum correlations.</p>
+                                <div class="mt-2 text-xs font-mono text-fuchsia-300/70">
+                                    ● Control → ⊕ Target
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Circuit Symbol Legend -->
+                        <div class="mt-4 pt-4 border-t border-gray-700">
+                            <div class="flex flex-wrap items-center gap-6 text-xs text-gray-400">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-indigo-400 font-mono">|q₀⟩</span>
+                                    <span>Qubit in ground state</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-indigo-400">━━━</span>
+                                    <span>Quantum wire (time flows →)</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-purple-400">●</span>
+                                    <span>Control qubit</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-purple-400">⊕</span>
+                                    <span>Target qubit</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500">⟨M⟩</span>
+                                    <span>Measurement</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 rounded-2xl border border-gray-800 bg-gray-900/40 backdrop-blur-md">
+                        <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500"></span>
+                            Why Quantum Machine Learning?
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-xl">🌀</span>
+                                    <div>
+                                        <h4 class="text-cyan-400 font-semibold">Superposition</h4>
+                                        <p class="text-sm text-gray-400">Qubits exist in multiple states simultaneously,
+                                            allowing parallel processing of feature combinations.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-xl">🔗</span>
+                                    <div>
+                                        <h4 class="text-purple-400 font-semibold">Entanglement</h4>
+                                        <p class="text-sm text-gray-400">Correlated qubits capture complex feature
+                                            interactions that classical methods might miss.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-xl">📐</span>
+                                    <div>
+                                        <h4 class="text-indigo-400 font-semibold">High-Dimensional Feature Space</h4>
+                                        <p class="text-sm text-gray-400">Quantum feature maps project data into
+                                            exponentially large Hilbert spaces for better separation.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-xl">⚡</span>
+                                    <div>
+                                        <h4 class="text-green-400 font-semibold">Quantum Advantage</h4>
+                                        <p class="text-sm text-gray-400">For certain data structures, quantum kernels
+                                            can outperform classical SVMs in accuracy.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-500">
+            UC Prediction QML | Quantum Circuit Lab - Educational Module
+        </footer>
+    </div>
+
+    <script src="quantum_lab.js"></script>
+</body>
+
+</html>

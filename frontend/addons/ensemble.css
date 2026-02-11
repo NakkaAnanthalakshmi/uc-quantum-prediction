@@ -1,0 +1,63 @@
+/* Ensemble Page Styles */
+body {
+    background-color: #05080f;
+    background-image: url('../medical_ultimate_live.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Custom range inputs */
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #1e293b;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#weight1::-webkit-slider-thumb {
+    background: #a855f7;
+}
+
+#weight2::-webkit-slider-thumb {
+    background: #ec4899;
+}
+
+#weight3::-webkit-slider-thumb {
+    background: #3b82f6;
+}
+
+/* Result Highlight */
+.winner {
+    animation: winner-glow 2s infinite;
+}
+
+@keyframes winner-glow {
+
+    0%,
+    100% {
+        border-color: rgba(168, 85, 247, 0.5);
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+    }
+
+    50% {
+        border-color: rgba(168, 85, 247, 0.8);
+        box-shadow: 0 0 25px rgba(168, 85, 247, 0.4);
+    }
+}
+
+/* Chart Container */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

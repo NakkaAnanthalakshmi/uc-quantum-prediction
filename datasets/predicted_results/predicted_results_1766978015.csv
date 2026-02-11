@@ -1,0 +1,16 @@
+Patient_ID,Prediction,IsPositive,Confidence,CRP,ESR
+UP0046,Ulcerative Colitis (Positive),True,86.0814897040706,20.51,23
+UP0047,Healthy (Negative),False,85.04893366352644,9.33,18
+UP0048,Healthy (Negative),False,86.21233808815455,7.18,13
+UP0049,Healthy (Negative),False,86.59207777797235,6.95,3
+UP0050,Ulcerative Colitis (Positive),True,93.88923747732073,29.78,99
+UP0051,Healthy (Negative),False,89.18388362261395,9.08,1
+UP0052,Healthy (Negative),False,93.43615490061146,0.79,3
+UP0053,Ulcerative Colitis (Positive),True,85.35244858905642,45.9,52
+UP0054,Ulcerative Colitis (Positive),True,90.00911494639489,31.58,19
+UP0055,Healthy (Negative),False,88.97776935692536,8.4,2
+UP0056,Ulcerative Colitis (Positive),True,93.2787917600316,54.69,12
+UP0057,Healthy (Negative),False,90.81453161095065,3.13,12
+UP0058,Ulcerative Colitis (Positive),True,94.11357521971743,15.85,91
+UP0059,Ulcerative Colitis (Positive),True,91.42872119127036,45.07,16
+UP0060,Healthy (Negative),False,86.84351156895852,5.66,17

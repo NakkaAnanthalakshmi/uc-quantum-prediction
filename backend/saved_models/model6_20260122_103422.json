@@ -1,0 +1,10 @@
+{
+    "id": "model6_20260122_103422.json",
+    "name": "model6",
+    "date": "2026-01-22 10:34",
+    "params": {
+        "reps": 3,
+        "entanglement": "circular"
+    },
+    "accuracy": "97.0%"
+}
