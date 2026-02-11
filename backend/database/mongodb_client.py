@@ -4,10 +4,25 @@ from datetime import datetime
 import os
 
 # Production Hardware Configuration
-MONGO_URI = os.environ.get("MONGO_URI") or \
-            os.environ.get("MONGODB_URL") or \
-            os.environ.get("MONGODB_URI") or \
-            "mongodb://localhost:27017/"
+def get_mongo_uri():
+    # 1. Primary: Explicit URI
+    uri = os.environ.get("MONGO_URI") or os.environ.get("MONGODB_URL") or os.environ.get("MONGODB_URI")
+    if uri: return uri
+
+    # 2. Secondary: Construct from individual Railway params
+    host = os.environ.get("MONGOHOST")
+    port = os.environ.get("MONGOPORT")
+    user = os.environ.get("MONGOUSER")
+    pwd = os.environ.get("MONGOPASSWORD")
+    
+    if host and port:
+        auth = f"{user}:{pwd}@" if user and pwd else ""
+        return f"mongodb://{auth}{host}:{port}/"
+    
+    # 3. Fallback: Localhost
+    return "mongodb://localhost:27017/"
+
+MONGO_URI = get_mongo_uri()
 DB_NAME = "quantum_clinical_db"
 
 class MongoClient:
