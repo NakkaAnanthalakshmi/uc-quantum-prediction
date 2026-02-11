@@ -45,9 +45,13 @@ class PredictionResponse(BaseModel):
 
 @app.on_event("startup")
 async def startup_event():
-    # Initialize models on startup to avoid delay on first request
-    init_quantum()
-    init_classical()
+    # Initialize models in background to prevent Railway 502/Gateway Timeout
+    import threading
+    print("STARTUP: Initializing Quantum & Classical engines in background thread...")
+    thread = threading.Thread(target=lambda: [init_quantum(), init_classical()])
+    thread.daemon = True
+    thread.start()
+    print("STARTUP: API Layer Active (Models loading in background).")
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
