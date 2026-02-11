@@ -16,7 +16,10 @@ uvicorn main:app --host 127.0.0.1 --port 8001 &
 
 # 4. WAIT FOR BACKEND: Poll until port 8001 is active
 echo "Waiting for Backend to maximize..."
-timeout 30s bash -c 'until curl -s http://127.0.0.1:8001/health > /dev/null; do sleep 1; done'
+if ! timeout 45s bash -c 'until curl -s http://127.0.0.1:8001/health > /dev/null; do sleep 1; done'; then
+    echo "CRITICAL: Backend failed to start. Exiting to trigger restart."
+    exit 1
+fi
 echo "Backend is LIVE."
 
 # 5. START NGINX: Run in foreground (this keeps container alive)
