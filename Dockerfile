@@ -10,7 +10,7 @@ ENV PORT 8080
 RUN apt-get update && apt-get install -y \
     nginx \
     gettext-base \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
