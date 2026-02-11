@@ -31,5 +31,5 @@ __pycache__/
 Dockerfile
 docker-compose.yml
 railway.json
-nginx.conf
-start.sh
+# nginx.conf  <-- DO NOT IGNORE (Needed for Cloud Build)
+# start.sh    <-- DO NOT IGNORE (Needed for Cloud Build)
