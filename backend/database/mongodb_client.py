@@ -3,58 +3,62 @@ from bson.binary import Binary
 from datetime import datetime
 import os
 
-def get_mongo_uri():
-    # 1. DIAGNOSTIC: Audit environment for any Mongo-related keys
-    print("--- Clinical Environment Audit ---")
-    mongo_keys = [k for k in os.environ.keys() if "MONGO" in k or "DB" in k]
-    for k in mongo_keys:
-        val = os.environ.get(k, "")
-        masked = val[:15] + "..." if len(val) > 15 else val
-        print(f"AUDIT found: {k} = {masked}")
+def get_mongo_uris():
+    """Returns a list of potential URIs to try, ordered by reliability."""
+    uris = []
     
-    # 2. Primary: Explicit URI
-    uri = os.environ.get("MONGO_URL") or \
-          os.environ.get("MONGODB_URL") or \
-          os.environ.get("MONGO_URI") or \
-          os.environ.get("MONGODB_URI")
-    if uri: 
-        print(f"DATABASE: Valid URI identified in environment.")
-        return uri
+    # Tier 1: User-defined or Railway-linked URIs
+    keys = ["MONGO_URL", "MONGODB_URL", "MONGO_URI", "MONGODB_URI", "MONGO_PUBLIC_URL"]
+    for k in keys:
+        val = os.environ.get(k)
+        if val and val not in uris:
+            uris.append(val)
+            print(f"DIAGNOSTIC: Identified {k} as potential connection path.")
 
-    # 3. Secondary: Construct from individual Railway params
+    # Tier 2: Individual Parameter construction
     host = os.environ.get("MONGOHOST")
-    port = os.environ.get("MONGOPORT")
+    port = os.environ.get("MONGOPORT", "27017")
     user = os.environ.get("MONGOUSER")
     pwd = os.environ.get("MONGOPASSWORD")
     
-    if host and port:
+    if host:
         auth = f"{user}:{pwd}@" if user and pwd else ""
-        print("DATABASE: Constructing from shared parameters.")
-        return f"mongodb://{auth}{host}:{port}/"
-    
-    # 4. Tertiary: Smart Fallback (Try common Railway internal DNS names)
-    print("DATABASE: Standard variables missing. Probing Internal Network...")
-    return "mongodb://mongo:27017/"
+        uris.append(f"mongodb://{auth}{host}:{port}/")
+        # Also try direct service names as fallbacks
+        uris.append(f"mongodb://{auth}mongo:{port}/")
+        uris.append(f"mongodb://{auth}mongodb:{port}/")
 
-MONGO_URI = get_mongo_uri()
-# Mask password for logs
-log_uri = MONGO_URI.split("@")[-1] if "@" in MONGO_URI else MONGO_URI
-print(f"DATABASE CONFIG: Final target -> {log_uri}")
+    # Tier 3: Hardcoded Last Resorts
+    uris.append("mongodb://mongo:27017/")
+    uris.append("mongodb://localhost:27017/")
+    
+    return uris
 
 DB_NAME = os.environ.get("MONGODATABASE") or "quantum_clinical_db"
 
 class MongoClient:
     def __init__(self):
-        try:
-            print(f"Connecting to MongoDB at {log_uri}...")
-            self.client = pymongo.MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-            self.db = self.client[DB_NAME]
-            # Verify connection
-            self.client.server_info()
-            print("DATABASE: SUCCESSful connection established.")
-        except Exception as e:
-            print(f"DATABASE: Connection FAILED. Reason: {e}")
-            self.db = None
+        potential_uris = get_mongo_uris()
+        self.db = None
+        
+        print(f"--- DATABASE INITIALIZATION: Attempting {len(potential_uris)} paths ---")
+        
+        for uri in potential_uris:
+            # Mask for safety
+            log_path = uri.split("@")[-1] if "@" in uri else uri
+            try:
+                print(f"PATH PROBE: Testing {log_path}...")
+                client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=3000)
+                client.server_info() # Trigger connection
+                
+                self.client = client
+                self.db = self.client[DB_NAME]
+                print(f"DATABASE: SUCCESS! Connected via {log_path}")
+                return
+            except Exception as e:
+                print(f"PATH FAILED: {log_path}. Reason: {str(e)[:100]}")
+        
+        print("DATABASE: CRITICAL FAILURE. All connection paths exhausted.")
 
     def save_prediction(self, patient_id, prediction, confidence, metrics, image_bytes=None, metadata=None):
         """Stores a single prediction result using Binary storage for images."""
