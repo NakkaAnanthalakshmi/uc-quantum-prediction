@@ -4,7 +4,10 @@ from datetime import datetime
 import os
 
 # Production Hardware Configuration
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
+MONGO_URI = os.environ.get("MONGO_URI") or \
+            os.environ.get("MONGODB_URL") or \
+            os.environ.get("MONGODB_URI") or \
+            "mongodb://localhost:27017/"
 DB_NAME = "quantum_clinical_db"
 
 class MongoClient:
