@@ -197,6 +197,28 @@
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('records-grid').innerHTML = '';
 
+            // Update Status Banner
+            try {
+                const healthRes = await fetch(`${API_BASE}/debug-db`);
+                const health = await healthRes.json();
+                const statusText = document.querySelector('.text-emerald-300\\/70'); // Escaped selector
+                const statusBadge = document.querySelector('.text-emerald-400.font-mono');
+                
+                if (statusText && statusBadge) {
+                    if (health.status === 'connected') {
+                        statusText.innerText = `Connected to Cloud Instance (${health.db_name}). Records are live.`;
+                        statusBadge.innerText = "LIVE / ONLINE";
+                        statusBadge.className = "px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-[10px] text-emerald-400 font-mono";
+                    } else {
+                        statusText.innerText = "Connection Failed. Running in Offline Mode.";
+                        statusBadge.innerText = "OFFLINE";
+                        statusBadge.className = "px-3 py-1 bg-red-500/10 rounded-full border border-red-500/20 text-[10px] text-red-400 font-mono";
+                    }
+                }
+            } catch (e) {
+                console.log("Status fetch failed", e);
+            }
+
             try {
                 const res = await fetch(`${API_BASE}/db-history`);
                 dbData = await res.json();

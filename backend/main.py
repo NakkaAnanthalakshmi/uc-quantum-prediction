@@ -77,6 +77,23 @@ async def health_check():
         "engine": "live"
     }
 
+@app.get("/debug-db")
+async def debug_db():
+    """Deep inspection of DB connection for debugging."""
+    status = "connected" if (db_client.db is not None) else "disconnected"
+    info = "No Connection"
+    try:
+        if db_client.client:
+            info = db_client.client.server_info()
+    except Exception as e:
+        info = str(e)
+        
+    return {
+        "status": status,
+        "db_name": db_client.db.name if db_client.db else "None",
+        "server_info": str(info)[:200]
+    }
+
 @app.get("/diagnostic-search")
 async def diagnostic_search(query: str = Query(None)):
     """Search for patient records by ID or prediction Type."""

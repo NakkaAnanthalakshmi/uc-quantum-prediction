@@ -19,12 +19,16 @@ async function startConnectivityMonitor() {
             const data = await res.json();
             console.log("Health status received:", data.status);
 
-            if (data.status === 'healthy') {
+            if (data.status === 'healthy' && data.database === 'connected') {
                 statusLed.style.background = '#10b981'; // Green
                 statusLed.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.5)';
                 statusText.innerText = 'DATABASE: ONLINE';
+            } else if (data.status === 'healthy') {
+                statusLed.style.background = '#f59e0b'; // Amber (API Up, DB Down)
+                statusLed.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.5)';
+                statusText.innerText = 'DATABASE: WARMING UP';
             } else {
-                statusLed.style.background = '#f59e0b'; // Amber
+                statusLed.style.background = '#ef4444'; // Red
                 statusLed.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.5)';
                 statusText.innerText = 'DATABASE: DEGRADED';
             }
