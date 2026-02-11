@@ -45,27 +45,39 @@ DB_NAME = os.environ.get("MONGODATABASE") or "quantum_clinical_db"
 
 class MongoClient:
     def __init__(self):
-        potential_uris = get_mongo_uris()
+        self.client = None
         self.db = None
+        self.is_connected = False
         
-        print(f"--- DATABASE INITIALIZATION: Attempting {len(potential_uris)} paths ---")
+        # Start background connection probe to prevent Startup Timeouts
+        import threading
+        print("DATABASE: Launching background connection engine...")
+        thread = threading.Thread(target=self._background_probe)
+        thread.daemon = True
+        thread.start()
+
+    def _background_probe(self):
+        potential_uris = get_mongo_uris()
+        
+        print(f"--- DATABASE BACKGROUND PROBE: Attempting {len(potential_uris)} paths ---")
         
         for uri in potential_uris:
             # Mask for safety
             log_path = uri.split("@")[-1] if "@" in uri else uri
             try:
                 print(f"PATH PROBE: Testing {log_path}...")
-                client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=3000)
+                client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=2000)
                 client.server_info() # Trigger connection
                 
                 self.client = client
                 self.db = self.client[DB_NAME]
+                self.is_connected = True
                 print(f"DATABASE: SUCCESS! Connected via {log_path}")
                 return
             except Exception as e:
-                print(f"PATH FAILED: {log_path}. Reason: {str(e)[:100]}")
+                print(f"PATH FAILED: {log_path}. Reason: {str(e)[:50]}")
         
-        print("DATABASE: CRITICAL FAILURE. All connection paths exhausted.")
+        print("DATABASE: CRITICAL FAILURE. All paths exhausted. App will run in Synthetic Mode.")
 
     def save_prediction(self, patient_id, prediction, confidence, metrics, image_bytes=None, metadata=None):
         """Stores a single prediction result using Binary storage for images."""
