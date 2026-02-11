@@ -442,7 +442,7 @@ async def list_dataset_files():
             files.append(f)
             
     print(f"DEBUG: Found {len(files)} dataset files in {dataset_dir}")
-    return {"files": files}
+    return {"files": files, "debug_path": dataset_dir, "cwd": os.getcwd()}
 
 class TrainRequest(BaseModel):
     selected_files: list[str]
@@ -463,14 +463,21 @@ async def train_model(req: TrainRequest):
     reps = req.reps
     entanglement = req.entanglement
 
-    # Save config for circuit visualization and future predictions
-    config_path = os.path.join("backend", "ml_engine", "model_config.json")
+    # Robust path resolution for config
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    config_dir = os.path.join(base_dir, "ml_engine")
+    if not os.path.exists(config_dir): os.makedirs(config_dir, exist_ok=True)
+    config_path = os.path.join(config_dir, "model_config.json")
+    
     with open(config_path, "w") as f:
         json.dump({"reps": reps, "entanglement": entanglement}, f)
     
     # Force re-init of quantum model with new config
     qml.pipeline = None
     qml.init_model()
+    
+    # Robust path resolution for datasets
+    # ... (datasets path was already fixed earlier) ...
     
     # Robust path resolution for datasets
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -612,7 +619,14 @@ async def train_model(req: TrainRequest):
         if uc_features:
             centroids["uc"] = np.mean(uc_features, axis=0).tolist()
             
-        with open("backend/ml_engine/centroids.json", "w") as f:
+        if uc_features:
+            centroids["uc"] = np.mean(uc_features, axis=0).tolist()
+            
+        # Absolute path for centroids
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        centroids_path = os.path.join(base_dir, "ml_engine", "centroids.json")
+        
+        with open(centroids_path, "w") as f:
             json.dump(centroids, f)
         print("DEBUG: Model retrained and centroids saved.")
     
@@ -637,7 +651,9 @@ async def list_models():
     ]
     
     saved = []
-    model_dir = "backend/saved_models"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_dir = os.path.join(base_dir, "saved_models")
+    
     if os.path.exists(model_dir):
         for f in os.listdir(model_dir):
             if f.endswith(".json"):
@@ -681,7 +697,9 @@ async def save_model(model_name: str, accuracy: str = "96.2%", reps: int = 2, en
     import json
     import datetime
     
-    model_dir = "backend/saved_models"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_dir = os.path.join(base_dir, "saved_models")
+    
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
         
@@ -711,7 +729,8 @@ async def save_model(model_name: str, accuracy: str = "96.2%", reps: int = 2, en
 async def delete_model(model_id: str):
     """Delete a saved model file from disk."""
     import os
-    model_dir = "backend/saved_models"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    model_dir = os.path.join(base_dir, "saved_models")
     file_path = os.path.join(model_dir, model_id)
     
     if not os.path.exists(file_path):

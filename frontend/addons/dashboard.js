@@ -77,7 +77,15 @@ async function loadDatasetFiles() {
         const data = await res.json();
 
         if (!data.files || data.files.length === 0) {
-            checklist.innerHTML = '<p style="color: var(--text-dim); font-size: 0.75rem;">No files found in /datasets</p>';
+            checklist.innerHTML = `
+                <div style="color: var(--text-dim); font-size: 0.75rem; padding: 10px; border: 1px dashed rgba(255,255,255,0.1);">
+                    <p>No files found.</p>
+                    <p style="font-family: monospace; font-size: 0.65rem; color: #64748b; margin-top: 5px;">
+                        Looking in: ${data.debug_path || 'Unknown'}<br>
+                        API: ${API_URL}<br>
+                        CWD: ${data.cwd || 'Unknown'}
+                    </p>
+                </div>`;
             return;
         }
 
@@ -194,7 +202,7 @@ async function runTraining() {
             return;
         }
 
-        log.innerHTML = `Loaded Dataset: ${data.processed_count} files selected.<br><br>`;
+        log.innerHTML = `Loaded Dataset: ${data.processed_count || 0} files selected.<br><br>`;
 
         let i = 0;
 
