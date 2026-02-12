@@ -66,7 +66,7 @@ class MongoClient:
             log_path = uri.split("@")[-1] if "@" in uri else uri
             try:
                 print(f"PATH PROBE: Testing {log_path}...")
-                client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=5000)
+                client = pymongo.MongoClient(uri, serverSelectionTimeoutMS=15000)
                 client.server_info() # Trigger connection
                 
                 self.client = client
