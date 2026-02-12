@@ -139,10 +139,40 @@
             <h2 class="results-header">Analysis Results</h2>
             <!-- CSV Batch Results Container -->
             <div id="csv-summary-container" style="display: none; margin-bottom: 2rem;">
-                <!-- ... existing csv logic ... -->
+                <div
+                    style="background: rgba(192, 132, 252, 0.1); border: 1px solid rgba(192, 132, 252, 0.3); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; font-size: 1.2rem;">📊 Batch Analysis Results</h3>
+                        <span id="csv-count-tag"
+                            style="background: var(--accent-purple); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.85rem; font-weight: 700;">0
+                            Patients</span>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                <th
+                                    style="padding: 0.8rem; text-align: left; font-size: 0.85rem; color: var(--text-dim);">
+                                    Patient ID</th>
+                                <th
+                                    style="padding: 0.8rem; text-align: left; font-size: 0.85rem; color: var(--text-dim);">
+                                    Prediction</th>
+                                <th
+                                    style="padding: 0.8rem; text-align: left; font-size: 0.85rem; color: var(--text-dim);">
+                                    Confidence</th>
+                                <th
+                                    style="padding: 0.8rem; text-align: left; font-size: 0.85rem; color: var(--text-dim);">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="csv-results-body">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="results-grid">
+            <div class="results-grid" id="standard-results-grid">
                 <!-- Quantum Card -->
                 <div class="card result-card">
                     <div class="card-title-row">
