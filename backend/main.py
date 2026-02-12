@@ -997,6 +997,21 @@ async def explain_decision(file: UploadFile = File(...)):
         print(f"Error in explain decision: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/db-record/{collection}/{record_id}")
+async def delete_db_record(collection: str, record_id: str):
+    """Delete a record from the specified MongoDB collection."""
+    try:
+        result = db_client.delete_record(collection, record_id)
+        if result.get("success"):
+            return {"message": "Record deleted successfully", "deleted_count": result.get("deleted_count")}
+        else:
+            raise HTTPException(status_code=404, detail=result.get("error", "Record not found"))
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in delete endpoint: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/predict-csv")
 async def predict_csv_batch(file: UploadFile = File(...)):
     """Process a clinical CSV file and return batch predictions."""

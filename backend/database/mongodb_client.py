@@ -234,6 +234,25 @@ class MongoClient:
         except Exception as e:
             print(f"Error fetching DB records: {e}")
             return {}
+    
+    def delete_record(self, collection_name: str, record_id: str):
+        """Delete a single record from the specified collection by ObjectId."""
+        if self.db is None:
+            return {"success": False, "error": "Database not connected"}
+        
+        try:
+            from bson import ObjectId
+            collection = self.db[collection_name]
+            result = collection.delete_one({"_id": ObjectId(record_id)})
+            
+            if result.deleted_count > 0:
+                print(f"✓ Deleted record {record_id} from {collection_name}")
+                return {"success": True, "deleted_count": result.deleted_count}
+            else:
+                return {"success": False, "error": "Record not found"}
+        except Exception as e:
+            print(f"Error deleting record: {e}")
+            return {"success": False, "error": str(e)}
 
 # Global singleton instance
 db_client = MongoClient()

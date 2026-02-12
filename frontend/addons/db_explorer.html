@@ -52,9 +52,37 @@
             transition: transform 0.2s;
         }
 
+        .record-card {
+            position: relative;
+        }
+
         .record-card:hover {
             transform: translateY(-4px);
             border-color: var(--accent-cyan);
+        }
+
+        .record-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.9);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s;
+            font-size: 16px;
+            z-index: 10;
+        }
+
+        .delete-btn:hover {
+            background: rgb(239, 68, 68);
+            transform: scale(1.1);
         }
 
         .img-preview {
@@ -193,6 +221,29 @@
         let dbData = null;
         let currentFolder = 'predictions';
 
+        async function deleteRecord(collection, recordId) {
+            if (!confirm('Are you sure you want to delete this record? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/db-record/${collection}/${recordId}`, {
+                    method: 'DELETE'
+                });
+
+                if (res.ok) {
+                    alert('✓ Record deleted successfully');
+                    await fetchRecords(); // Refresh the view
+                } else {
+                    const error = await res.json();
+                    alert(`Failed to delete: ${error.detail}`);
+                }
+            } catch (e) {
+                console.error(e);
+                alert(`Error: ${e.message}`);
+            }
+        }
+
         async function fetchRecords() {
             document.getElementById('loading-state').classList.remove('hidden');
             document.getElementById('records-grid').innerHTML = '';
@@ -203,7 +254,7 @@
                 const health = await healthRes.json();
                 const statusText = document.querySelector('.text-emerald-300\\/70'); // Escaped selector
                 const statusBadge = document.querySelector('.text-emerald-400.font-mono');
-                
+
                 if (statusText && statusBadge) {
                     if (health.status === 'connected') {
                         statusText.innerText = `Connected to Cloud Instance (${health.db_name}). Records are live.`;
@@ -261,6 +312,7 @@
                     const isPos = rec.prediction.includes('Positive') || rec.prediction.includes('Ulcerative');
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 ${isPos ? 'border-l-red-500' : 'border-l-emerald-500'}">
+                            <button class="delete-btn" onclick="deleteRecord('predictions', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             ${rec.image ? `<img src="data:image/png;base64,${rec.image}" class="img-preview mb-4">` : '<div class="img-preview mb-4 flex items-center justify-center text-xs opacity-30 text-center px-4">No Image Stored (Clinical Data)</div>'}
                             <div class="text-xs text-text-dim mb-1">${date}</div>
                             <div class="font-bold text-sm mb-2 truncate">${rec.patient_id}</div>
@@ -273,6 +325,7 @@
                 } else if (currentFolder === 'xai') {
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 border-l-orange-500">
+                            <button class="delete-btn" onclick="deleteRecord('xai_results', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             <div class="flex gap-2 mb-4">
                                 <img src="data:image/png;base64,${rec.original}" class="w-1/2 h-24 object-cover rounded-lg">
                                 <img src="data:image/png;base64,${rec.heatmap}" class="w-1/2 h-24 object-cover rounded-lg">
@@ -285,6 +338,7 @@
                 } else if (currentFolder === 'circuits') {
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 border-l-accent-cyan">
+                            <button class="delete-btn" onclick="deleteRecord('prediction_circuits', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             <img src="data:image/png;base64,${rec.diagram}" class="img-preview mb-4" style="background: #0f172a; object-fit: contain;">
                             <div class="text-xs text-text-dim mb-1">${date}</div>
                             <div class="font-bold text-sm mb-1">${rec.metadata.source || 'Circuit Experiment'}</div>
@@ -294,6 +348,7 @@
                 } else if (currentFolder === 'ensemble') {
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 border-l-pink-500">
+                            <button class="delete-btn" onclick="deleteRecord('ensemble_logs', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             <div class="text-3xl mb-4">⚖️</div>
                             <div class="text-xs text-text-dim mb-1">${date}</div>
                             <div class="font-bold text-sm mb-2">Consolidated Vote</div>
@@ -307,6 +362,7 @@
                 } else if (currentFolder === 'training') {
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 border-l-blue-500">
+                            <button class="delete-btn" onclick="deleteRecord('training_logs', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             <div class="text-3xl mb-4">⚙️</div>
                             <div class="text-xs text-text-dim mb-1">${date}</div>
                             <div class="font-bold text-sm mb-2">Training Session</div>
@@ -317,6 +373,7 @@
                 } else {
                     cardHtml = `
                         <div class="glass-card p-4 record-card border-l-4 border-l-accent-purple">
+                            <button class="delete-btn" onclick="deleteRecord('batch_inferences', '${rec._id.$oid}')" title="Delete Record">🗑️</button>
                             <div class="text-4xl mb-4">📄</div>
                             <div class="text-xs text-text-dim mb-1">${date}</div>
                             <div class="font-bold text-sm mb-2 truncate">${rec.filename || 'Batch Analysis'}</div>
