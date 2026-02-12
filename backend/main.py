@@ -7,6 +7,16 @@ import sys
 import os
 import random
 
+try:
+    from dotenv import load_dotenv
+    # Load local environment variables from .env if present
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env'))
+    print("SUCCESS: Local .env loaded correctly.")
+except ImportError:
+    print("WARNING: python-dotenv not found. Environment variables must be set manually.")
+except Exception as e:
+    print(f"WARNING: Could not load .env file: {e}")
+
 # Adjust path to include current directory
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -641,7 +651,7 @@ async def train_model(req: TrainRequest):
 
 @app.get("/models")
 async def list_models():
-    """List available model configurations (default and saved)."""
+    """List available model configurations (default, saved on disk, and synced in cloud)."""
     import os
     import json
     
@@ -650,7 +660,8 @@ async def list_models():
         {"id": "v2_circular", "name": "Experimental (ZZ Circular)", "params": {"reps": 3, "entanglement": "circular"}}
     ]
     
-    saved = []
+    # 1. Fetch from local filesystem
+    saved_on_disk = []
     base_dir = os.path.dirname(os.path.abspath(__file__))
     model_dir = os.path.join(base_dir, "saved_models")
     
@@ -659,9 +670,21 @@ async def list_models():
             if f.endswith(".json"):
                 try:
                     with open(os.path.join(model_dir, f), "r") as m:
-                        saved.append(json.load(m))
+                        saved_on_disk.append(json.load(m))
                 except:
                     pass
+    
+    # 2. Fetch from Cloud Database (Automatic Sync)
+    saved_in_cloud = db_client.get_trained_models()
+    
+    # 3. Merge and Deduplicate (Cloud overrides disk if IDs match)
+    all_models_dict = {m["id"]: m for m in saved_on_disk}
+    for m in saved_in_cloud:
+        all_models_dict[m["id"]] = m
+        
+    # Sort by date/timestamp if possible
+    # (some older models might only have "date" string, newer have "timestamp")
+    saved = sorted(all_models_dict.values(), key=lambda x: x.get('date', ''), reverse=True)
                     
     return {"presets": presets, "saved": saved}
 
@@ -692,7 +715,7 @@ async def compare_circuits():
 
 @app.post("/save-model")
 async def save_model(model_name: str, accuracy: str = "96.2%", reps: int = 2, entanglement: str = "linear"):
-    """Save the current model state to a physical file with dynamic parameters."""
+    """Save the current model state to local file AND cloud database for automatic sync."""
     import os
     import json
     import datetime
@@ -720,27 +743,48 @@ async def save_model(model_name: str, accuracy: str = "96.2%", reps: int = 2, en
         "accuracy": accuracy
     }
     
+    # 1. Save to local file (for localhost)
     with open(filepath, "w") as f:
         json.dump(model_data, f, indent=4)
+    
+    # 2. Save to MongoDB Atlas (for cloud sync - automatic!)
+    db_client.save_trained_model(model_data.copy())
         
-    return {"status": "success", "message": f"Model saved as '{filename}' with Accuracy: {accuracy}"}
+    return {"status": "success", "message": f"Model saved locally AND synced to cloud as '{filename}' with Accuracy: {accuracy}"}
 
 @app.delete("/delete-model/{model_id}")
 async def delete_model(model_id: str):
-    """Delete a saved model file from disk."""
+    """Delete a saved model from both disk and cloud database."""
     import os
     base_dir = os.path.dirname(os.path.abspath(__file__))
     model_dir = os.path.join(base_dir, "saved_models")
     file_path = os.path.join(model_dir, model_id)
     
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Model file not found")
+    deleted_from_disk = False
+    deleted_from_cloud = False
+    
+    # 1. Attempt Delete from Disk
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+            deleted_from_disk = True
+        except Exception as e:
+            print(f"Error deleting model from disk: {e}")
+            
+    # 2. Attempt Delete from Cloud
+    deleted_from_cloud = db_client.delete_trained_model(model_id)
+    
+    if not deleted_from_disk and not deleted_from_cloud:
+        raise HTTPException(status_code=404, detail="Model not found on disk or cloud.")
         
-    try:
-        os.remove(file_path)
-        return {"status": "success", "message": f"Model '{model_id}' deleted successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete model: {str(e)}")
+    return {
+        "status": "success", 
+        "message": f"Model '{model_id}' deleted.",
+        "details": {
+            "disk": deleted_from_disk,
+            "cloud": deleted_from_cloud
+        }
+    }
 
 @app.get("/compare")
 async def compare_configs():
@@ -1011,53 +1055,6 @@ async def delete_db_record(collection: str, record_id: str):
     except Exception as e:
         print(f"Error in delete endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/predict-csv")
-async def predict_csv_batch(file: UploadFile = File(...)):
-    """Process a clinical CSV file and return batch predictions."""
-    import pandas as pd
-    import io
-    import numpy as np
-
-    try:
-        content = await file.read()
-        df = pd.read_csv(io.BytesIO(content))
-        
-        results = []
-        
-        # Detect ID column
-        id_col = next((col for col in df.columns if 'id' in col.lower()), df.columns[0])
-        
-        for _, row in df.iterrows():
-            # Simulate processing of clinical features
-            # In a real scenario, this would feed into a Hybrid QSVM
-            
-            # Generate deterministic "randomness" based on row data hash
-            row_hash = hash(str(row.values)) % 1000
-            np.random.seed(row_hash)
-            
-            # Simulated Probability
-            prob = np.random.uniform(0.1, 0.95)
-            is_positive = prob > 0.5
-            
-            # Simulated Features for Circuit
-            features = np.random.uniform(0, np.pi, 4).tolist()
-            
-            results.append({
-                "patient_id": str(row[id_col]),
-                "is_positive": is_positive,
-                "quantum_prediction": "Positive (Ulcerative Colitis)" if is_positive else "Negative (Healthy)",
-                "classical_prediction": "High Risk" if is_positive else "Low Risk",
-                "classical_confidence": round(prob, 3),
-                "features": features
-            })
-            
-        print(f"DEBUG: Processed {len(results)} rows from CSV.")
-        return {"results": results}
-
-    except Exception as e:
-        print(f"Error in CSV processing: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to process CSV: {str(e)}")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8001))

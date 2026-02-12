@@ -1,8 +1,10 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
-pymongo
+pymongo[srv]
+dnspython
 fastapi
 uvicorn
 python-multipart
+python-dotenv
 qiskit==1.4.5
 qiskit-machine-learning==0.8.4
 torch
