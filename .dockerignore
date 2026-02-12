@@ -1,8 +1,8 @@
 # Exclude large local data
 !datasets/
 !backend/datasets/
-saved_models/
-backend/saved_models/
+# saved_models/  <-- INCLUDE saved models in deployment
+# backend/saved_models/  <-- INCLUDE saved models in deployment
 *.png
 *.jpg
 *.svg
