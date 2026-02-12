@@ -83,14 +83,14 @@ async def debug_db():
     status = "connected" if (db_client.db is not None) else "disconnected"
     info = "No Connection"
     try:
-        if db_client.client:
+        if db_client.client is not None:
             info = db_client.client.server_info()
     except Exception as e:
         info = str(e)
         
     return {
         "status": status,
-        "db_name": db_client.db.name if db_client.db else "None",
+        "db_name": db_client.db.name if db_client.db is not None else "None",
         "server_info": str(info)[:200]
     }
 
