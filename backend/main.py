@@ -1044,7 +1044,6 @@ async def predict_csv_batch(file: UploadFile = File(...)):
         print(f"Error in CSV processing: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to process CSV: {str(e)}")
 
-# Ensure this is before if __name__ == "__main__":
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8001))
     uvicorn.run(app, host="0.0.0.0", port=port)
-

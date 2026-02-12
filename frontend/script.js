@@ -273,7 +273,7 @@ async function runCSVAnalysis() {
         await prefetchCircuit();
     } catch (e) {
         console.error(e);
-        alert('CSV analysis failed. Make sure the backend is updated.');
+        alert(`CSV analysis failed: ${e.message}`);
     } finally {
         showLoader(false);
     }
