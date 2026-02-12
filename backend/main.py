@@ -24,7 +24,7 @@ import numpy as np
 import pandas as pd
 import io
 
-from ml_engine.preprocessing import extract_features
+from ml_engine.preprocessing import extract_features, is_medical_image
 import ml_engine.quantum as qml
 from ml_engine.quantum import predict_quantum, init_model as init_quantum
 from ml_engine.classical import predict_classical, init_models as init_classical
@@ -53,6 +53,28 @@ class PredictionResponse(BaseModel):
     classical_metrics: dict
     circuit_diagram: str = None
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    # Robustly handle FastApi/Starlette/Custom HTTP-style exceptions
+    status_code = getattr(exc, "status_code", 500)
+    detail = getattr(exc, "detail", str(exc))
+    
+    if status_code != 500:
+        return JSONResponse(
+            status_code=status_code,
+            content={"detail": detail, "type": type(exc).__name__},
+            headers={"Access-Control-Allow-Origin": "*"}
+        )
+        
+    print(f"CRITICAL ERROR: {type(exc).__name__}: {exc}")
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc), "type": str(type(exc).__name__)},
+        headers={"Access-Control-Allow-Origin": "*"}
+    )
+
 @app.on_event("startup")
 async def startup_event():
     # Initialize models in background to prevent Railway 502/Gateway Timeout
@@ -62,17 +84,6 @@ async def startup_event():
     thread.daemon = True
     thread.start()
     print("STARTUP: API Layer Active (Models loading in background).")
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    import traceback
-    print(f"CRITICAL ERROR: {exc}")
-    traceback.print_exc()
-    return JSONResponse(
-        status_code=500,
-        content={"detail": str(exc), "type": str(type(exc).__name__)},
-        headers={"Access-Control-Allow-Origin": "*"}
-    )
 
 @app.get("/")
 def home():
@@ -320,7 +331,9 @@ async def predict(background_tasks: BackgroundTasks, file: UploadFile = File(...
             features = df.select_dtypes(include=[np.number]).iloc[0].values
             features = features / 100.0 # Standardize scaling
         else:
-            # Image
+            # Image Domain Validation
+            if not is_medical_image(contents):
+                raise HTTPException(status_code=400, detail="INVALID_IMAGE_DOMAIN: Please upload a colonoscopy or clinical image.")
             features = extract_features(contents)
         
         # Predictions
@@ -347,6 +360,8 @@ async def predict(background_tasks: BackgroundTasks, file: UploadFile = File(...
             "quantum_metrics": metrics["quantum"],
             "classical_metrics": metrics["classical"]
         }
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error processing request: {e}")
         import traceback
@@ -972,6 +987,11 @@ async def explain_decision(file: UploadFile = File(...)):
     """Returns explainable AI decision with Grad-CAM style explanations."""
     try:
         contents = await file.read()
+        
+        # Image Domain Validation
+        if not is_medical_image(contents):
+            raise HTTPException(status_code=400, detail="INVALID_IMAGE_DOMAIN: Please upload a colonoscopy or clinical image.")
+            
         features = extract_features(contents)
         
         # Get quantum prediction
@@ -1037,6 +1057,8 @@ async def explain_decision(file: UploadFile = File(...)):
             "factors": factors,
             "explanation": explanation
         }
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error in explain decision: {e}")
         raise HTTPException(status_code=500, detail=str(e))

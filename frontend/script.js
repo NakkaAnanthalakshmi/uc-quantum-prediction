@@ -140,7 +140,15 @@ async function runAnalysis() {
             // Add timeout or signal if needed, but keeping it simple for now
         });
 
-        if (!res.ok) throw new Error(`Backend Error (${res.status}): Please check if backend/main.py is running.`);
+        if (!res.ok) {
+            if (res.status === 400) {
+                const errorData = await res.json();
+                alert(`🛡️ Clinical Domain Mismatch: ${errorData.detail}`);
+                showLoader(false);
+                return;
+            }
+            throw new Error(`Backend Error (${res.status}): Please check if backend/main.py is running.`);
+        }
 
         const data = await res.json();
         displayResults(data);

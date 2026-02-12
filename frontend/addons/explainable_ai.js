@@ -76,12 +76,17 @@ async function analyzeImage() {
         if (response.ok) {
             const data = await response.json();
             displayDecision(data);
+        } else if (response.status === 400) {
+            const errorData = await response.json();
+            alert(`🛡️ Clinical Domain Mismatch: ${errorData.detail}`);
+            document.getElementById('gradcam-placeholder').innerHTML = '<div class="text-6xl mb-4">⚠️</div><p class="text-red-400">Invalid Image Domain</p>';
+            document.getElementById('decision-container').innerHTML = '<p class="text-red-500 text-sm mt-2">Analysis aborted.</p>';
         } else {
             // Use simulated data
             displayDecision(generateSimulatedDecision());
         }
     } catch (error) {
-        console.log("Using simulated decision data");
+        console.log("Error in analysis:", error);
         displayDecision(generateSimulatedDecision());
     }
 }
