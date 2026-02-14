@@ -24,37 +24,63 @@ preprocess = transforms.Compose([
 def is_medical_image(image_bytes):
     """
     Heuristic to check if an image is likely a colonoscopy or medical image.
-    Uses color distribution and basic texture analysis.
+    Improved to handle photos of monitors with black bezels/borders.
     """
     try:
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         img_np = np.array(image)
         
-        # 1. Color Profile Check
-        # Colonoscopy images are dominated by red/pink/orange tones.
-        # We calculate the average R, G, B values.
-        # r_avg, g_avg, b_avg = np.mean(img_np, axis=(0, 1))
-        
-        # More robust: check if R > G > B for most pixels
         r, g, b = img_np[:,:,0], img_np[:,:,1], img_np[:,:,2]
         
-        # Calculate percentage of "warm" pixels (common in endoscopy)
-        warm_pixels = np.logical_and(r > g, g > b)
-        warm_ratio = np.sum(warm_pixels) / (img_np.shape[0] * img_np.shape[1])
-        
-        # 2. Intensity Variance (Medical images have high contrast/vignetting)
+        # Calculate grayscale for intensity analysis
         gray = np.mean(img_np, axis=2)
+        
+        # 1. Filter out near-black pixels (monitor bezels, software backgrounds)
+        # Threshold of 30 for "background" pixels
+        non_black_mask = gray > 30
+        total_non_black = np.sum(non_black_mask)
+        
+        # 2. Color Profile Check (within non-black regions)
+        # Colonoscopy images are dominated by red/pink/orange tones.
+        # Broaden 'warm': R should be dominant over G, and significantly higher than B (or close if pink).
+        warm_pixels = np.logical_and.reduce((
+            r > g,            # Must have more red than green
+            r > (b - 20),     # Allow more blue (pink tones) than before
+            non_black_mask
+        ))
+        
+        if total_non_black > 0:
+            warm_ratio = np.sum(warm_pixels) / total_non_black
+            non_black_pct = total_non_black / gray.size
+        else:
+            warm_ratio = 0
+            non_black_pct = 0
+            
+        # 3. Intensity Variance
         variance = np.var(gray)
         
         # Log for debugging
-        print(f"DEBUG DOMAIN: warm_ratio={warm_ratio:.2f}, variance={variance:.2f}")
+        print(f"--- DOMAIN VALIDATION DEBUG ---")
+        print(f"File: {getattr(image, 'filename', 'unknown')}")
+        print(f"Warm Ratio (rel): {warm_ratio:.3f}")
+        print(f"Variance: {variance:.1f}")
+        print(f"Non-Black Pct: {non_black_pct:.3f}")
         
         # HEURISTIC:
-        # Colonoscopy images typically have a high warm_ratio (> 0.4) 
-        # and a significant intensity variance.
-        # Generic person images usually have more balanced R/G/B or different dominant colors.
-        if warm_ratio > 0.45 or (warm_ratio > 0.3 and variance > 1000):
+        # If relative warm ratio is high (> 0.35) --> Direct medical image
+        # OR if there's significant variance (> 700) and moderate warm ratio (> 0.15) --> Monitor photo
+        # Lowered thresholds as Ref 2/3 are likely hitting lower bounds.
+        if warm_ratio > 0.35 or (warm_ratio > 0.15 and variance > 700):
+            print("RESULT: VALID MEDICAL IMAGE")
             return True
+        
+        # 4. Fallback for extremely overexposed or specific lighting (low variance but clearly clinical)
+        # Check for "peak" red/pink presence
+        if warm_ratio > 0.6:
+            print("RESULT: VALID (Fallback Warm High)")
+            return True
+            
+        print("RESULT: INVALID DOMAIN")
         return False
     except Exception as e:
         print(f"Error in image validation: {e}")

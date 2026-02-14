@@ -12,4 +12,4 @@ if __name__ == "__main__":
     # Run Uvicorn
     # NOTE: reload=True can cause extra processes and unexpected restarts on Windows.
     # Keep it off for reliable local serving.
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8001, reload=False)
