@@ -12,11 +12,57 @@ async function fetchStatisticalData() {
             const data = await response.json();
             updateKPIs(data);
             updateCharts(data);
+            updateTable(data);
+            
+            // Show status if it's dynamic
+            if (!data.is_baseline) {
+                const subtext = document.querySelector('header h1').parentNode.nextElementSibling;
+                if (subtext) subtext.innerHTML += ` <span class="text-green-400 text-[10px] ml-2 font-mono">[DYNAMIC: ${data.n_samples} SAMPLES]</span>`;
+            }
         }
     } catch (error) {
         console.log("Using default statistical data");
         // Charts already initialized with default data
     }
+}
+
+function updateTable(data) {
+    const tableBody = document.getElementById('comparison-table-body');
+    if (!tableBody || !data.comparison) return;
+
+    tableBody.innerHTML = ''; // Clear existing rows
+
+    data.comparison.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index < data.comparison.length - 1 ? 'border-b border-gray-800' : '';
+        
+        let pColor = 'text-green-400';
+        let significance = '***';
+        if (row.p_value >= 0.05) {
+            pColor = 'text-gray-500';
+            significance = 'ns';
+        } else if (row.p_value >= 0.01) {
+            pColor = 'text-yellow-400';
+            significance = '*';
+        } else if (row.p_value >= 0.001) {
+            significance = '**';
+        }
+
+        const isAuc = row.metric === 'AUC-ROC';
+        const qVal = isAuc ? row.quantum.toFixed(3) : `${row.quantum}%`;
+        const cVal = isAuc ? row.classical.toFixed(3) : `${row.classical}%`;
+
+        tr.innerHTML = `
+            <td class="py-3 px-4 text-gray-300">${row.metric}</td>
+            <td class="py-3 px-4 text-center text-cyan-400 font-mono">${qVal}</td>
+            <td class="py-3 px-4 text-center text-gray-400 font-mono">${cVal}</td>
+            <td class="py-3 px-4 text-center ${pColor} font-mono">${row.p_value < 0.001 ? '< 0.001' : row.p_value.toFixed(4)}</td>
+            <td class="py-3 px-4 text-center">
+                <span class="px-2 py-1 rounded ${row.significant ? 'bg-green-900/50 text-green-400' : 'bg-gray-800 text-gray-500'} text-xs">${significance}</span>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    });
 }
 
 function updateKPIs(data) {
@@ -233,10 +279,34 @@ function initCharts() {
 }
 
 function updateCharts(data) {
-    // Update charts with real data if available
+    // Update Confidence Interval Chart
     if (data.ci_data && ciChart) {
         ciChart.data.datasets[0].data = data.ci_data.quantum;
         ciChart.data.datasets[1].data = data.ci_data.classical;
         ciChart.update();
+    }
+
+    // Update Bootstrap Chart with dynamic mean if available
+    if (data.is_baseline === false && bootstrapChart) {
+        const dynamicMean = data.ci_data.quantum[0]; // Accuracy
+        const newData = [];
+        const labels = bootstrapChart.data.labels;
+        
+        labels.forEach(label => {
+            const val = parseFloat(label);
+            const freq = Math.exp(-Math.pow(val - dynamicMean, 2) / 2) * 100;
+            newData.push(freq);
+        });
+
+        bootstrapChart.data.datasets[0].data = newData;
+        // Update highlight range (simple heuristic around mean)
+        bootstrapChart.data.datasets[0].backgroundColor = labels.map(l => {
+            const v = parseFloat(l);
+            if (v >= dynamicMean - 2.0 && v <= dynamicMean + 2.0) {
+                return 'rgba(168, 85, 247, 0.7)';
+            }
+            return 'rgba(148, 163, 184, 0.3)';
+        });
+        bootstrapChart.update();
     }
 }

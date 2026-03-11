@@ -209,6 +209,30 @@ function displayResults(data) {
     if (confidenceFill) confidenceFill.style.width = `${confidenceVal}%`;
 
     resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+    console.log("Prediction Result Data:", data);
+
+    // Store data for graph analysis
+    if (data.features) {
+        console.log("Features found, activating button...");
+        localStorage.setItem('lastPredictionData', JSON.stringify({
+            quantum_prediction: data.quantum_prediction,
+            classical_prediction: data.classical_prediction,
+            classical_confidence: data.classical_confidence,
+            quantum_metrics: data.quantum_metrics,
+            classical_metrics: data.classical_metrics,
+            features: data.features
+        }));
+        const graphBtn = document.getElementById('graph-analysis-btn');
+        if (graphBtn) {
+            graphBtn.style.display = 'block';
+            console.log('Graph Analysis button activated');
+        }
+    }
+}
+
+function navigateToGraphAnalysis() {
+    window.location.href = 'addons/graph_analysis.html';
 }
 
 // BATCH & CSV LOGIC
