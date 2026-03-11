@@ -1,4 +1,4 @@
-const API_URL = window.API_CONFIG ? window.API_CONFIG.API_URL : 'http://localhost:8001';
+const API_URL = window.API_CONFIG ? window.API_CONFIG.API_URL : window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:8001' : '/api';
 
 let currentSessionParams = {
     reps: 2,

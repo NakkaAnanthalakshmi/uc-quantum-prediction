@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8001";
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:8001' : '/api';
 
 const canvas = document.getElementById('circuitCanvas');
 const ctx = canvas.getContext('2d');
