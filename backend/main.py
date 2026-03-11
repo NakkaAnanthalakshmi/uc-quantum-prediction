@@ -85,6 +85,13 @@ async def startup_event():
     thread.daemon = True
     thread.start()
     print("STARTUP: API Layer Active (Models loading in background).")
+    
+    # Explicit Database Diagnostic
+    if not db_client.is_connected:
+        print("DATABASE WARNING: Primary connection not established yet.")
+        print("TIP: If using MongoDB Atlas, ensure your IP is WHITELISTED in the Atlas Dashboard.")
+    else:
+        print("DATABASE SUCCESS: Connected to MongoDB.")
 
 @app.get("/")
 def home():
